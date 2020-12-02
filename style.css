@@ -1,0 +1,69 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+#main_frame {
+    display: flex;
+    background-color: bisque;
+    min-height: 30rem;
+    width: 100%;
+    vertical-align: middle;
+    justify-content: center;
+}
+#chat_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-color: rosybrown;
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.75rem;
+    border-radius: 0.75rem;
+}
+#content_box {
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    /* display: flex; */
+    width: 100%;
+    /* height: 10rem; */
+    height: 100%;
+}
+.message_line {
+    margin: 0.75rem;
+    /* background-color: red; */
+}
+#message_box {
+    background-color: yellowgreen;
+    border-radius: 0.9rem;
+    padding: 0.75rem;
+    width: fit-content;
+    max-width: 30%;
+}
+.message_left {
+    border-bottom-left-radius: 0;
+}
+.message_right {
+    float: right;
+    align-self: end;
+    text-align: right;
+    /* word-wrap: break-word; */
+    word-wrap: normal;
+    border-bottom-right-radius: 0;
+}
+#input_box {
+    background-color: turquoise;
+    height: 6rem;
+    width: 100%;
+}
+#input_area {
+    height: 100%;
+    width: 100%;
+    /* height: 5rem; */
+    /* margin: 1rem; */
+    resize: none;
+    background-color: orange;
+}
