@@ -1,56 +1,34 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <!-- <v-main>
+      <router-link to="/"></router-link>
+      <router-link to="/about"></router-link>
+    <router-view></router-view>
+    </v-main> -->
+    <!-- <v-app-bar app class="text-uppercase grey-text">
+      <span class="font-weight-light">Local</span>
+      <span>Share</span>
+    </v-app-bar> -->
+  <v-main>
+  <MainWindow/>
+  </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+// import HelloWorld from './components/HelloWorld';
+// import Home from './views/Home';
+// import Home from './views/Home.vue';
+import MainWindow from './components/MainWindow';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    // HelloWorld,
+    // Home
+    // Home
+    MainWindow
   },
 
   data: () => ({
@@ -58,3 +36,15 @@ export default {
   }),
 };
 </script>
+
+<style>
+html,body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+/* .v-main {
+    height: 100%;
+  overflow: hidden;
+} */
+</style>
