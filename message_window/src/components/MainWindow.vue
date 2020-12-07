@@ -14,39 +14,12 @@
                 <v-flex xs4 md2>
             <v-btn outline block class="primary"> 2</v-btn>
         </v-flex> -->
-  <!-- </v-layout> -->
-  <!-- <div class="d-flex flex-cloumn mb-6">
-            <v-card
-            v-for="n in 3"
-            :key="n"
-            class="pa-2"
-            outlined
-            tile>
-            flex item {{n}}
-        </v-card>
-    </div> -->
-  <!-- </v-container> -->
-  <!-- <v-list>
-          <v-list-item>
-              <v-list-item-content>
-                  1
-              </v-list-item-content>
-          </v-list-item>
-      </v-list> -->
-  <!-- <v-card
-            v-for="n in 3"
-            :key="n"
-            class="pa-2"
-            outlined
-            tile>
-            flex item {{n}}
-        </v-card> -->
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
       <div id="message-content" v-bind:style="messageCon">
         <v-list full-height color="purple lighten-3" class="scrollable">
           <div
-            v-for="n in 3"
+            v-for="n in 10"
             :key="n"
             outlined
             class="primary pa-2 ma-2 d-flex flex-row"
@@ -97,20 +70,15 @@
         <v-textarea id="input"
           backgroud-color="blue"
           color="cyan"
-          label="label"
           rows="3"
           no-resize
           outlined
-          md12
+          placeholder="Input your message..."
         >
           {{ message }}
         </v-textarea>
       </div>
-      <!-- </v-layout> -->
     </div>
-    <!-- </v-col>
-      
-    </v-row> -->
   </v-container>
 </template>
 
@@ -120,25 +88,9 @@ export default {
     return {
       messageCon: {},
       message:
-        " 123 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post.",
+        " Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post.",
     };
   },
-  // macthHeight() {
-  //   let height = this.$refs.input.clientHeight;
-  //   console.log(this.macthHeight);
-  // }
-  // methods: {
-  //   matchHeight() {
-  //     var heightString = this.$refs.inputref.clientHeight + 'vh';
-  //    // var heightString = document.getElementById("input").offsetHeight;
-  //     // Vue.set(this.messageCon, 'height', heightString);
-  //     console.log(heightString);
-  //     return heightString;
-  //   }
-  // },
-  // mounted() {
-  //   this.matchHeight();
-  // },
 };
 </script>
 
@@ -164,21 +116,7 @@ export default {
   flex: 1;
 }
 
-.v-row {
-  height: 100%;
-}
-.v-list {
-  width: 100%;
-}
-.v-list-item {
-  width: 100%;
-}
-.v-card {
-  width: 100%;
-}
-.v-textarea{
-  /* position: fixed;
-  bottom: 0; */
+.v-textarea {
   height: 7rem;
 } 
 </style>
