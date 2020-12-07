@@ -43,10 +43,10 @@
         </v-card> -->
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
-      <div id="message-content" >
+      <div id="message-content" v-bind:style="messageCon">
         <v-list full-height color="purple lighten-3" class="scrollable">
           <div
-            v-for="n in 10"
+            v-for="n in 3"
             :key="n"
             outlined
             class="primary pa-2 ma-2 d-flex flex-row"
@@ -95,10 +95,10 @@
       </div>
       <div>
         <v-textarea id="input"
-          backgroud-color="light-blue"
-          color="black"
+          backgroud-color="blue"
+          color="cyan"
           label="label"
-          rows="5"
+          rows="3"
           no-resize
           outlined
           md12
@@ -118,44 +118,52 @@
 export default {
   data() {
     return {
+      messageCon: {},
       message:
         " 123 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post.",
     };
   },
+  // macthHeight() {
+  //   let height = this.$refs.input.clientHeight;
+  //   console.log(this.macthHeight);
+  // }
+  // methods: {
+  //   matchHeight() {
+  //     var heightString = this.$refs.inputref.clientHeight + 'vh';
+  //    // var heightString = document.getElementById("input").offsetHeight;
+  //     // Vue.set(this.messageCon, 'height', heightString);
+  //     console.log(heightString);
+  //     return heightString;
+  //   }
+  // },
+  // mounted() {
+  //   this.matchHeight();
+  // },
 };
 </script>
 
-<style>
+<style scoped>
 .scrollable {
   overflow-y: auto;
-  height: 60vh;
+  height: calc(100vh - 7rem);
 }
 .v-container {
   background-color: bisque;
-  /* border-bottom-left-radius: ; */
   height: 100%;
   overflow: hidden;
 }
 #main {
   height: 100%;
-  max-height: 100%;
-  /* background-color: coral; */
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  justify-content: space-between;
 }
 #message-content {
   background-color: dark;
   flex: 1;
-  /* overflow:hidden;
-  overflow-y: scroll; */
-  /* height: 60%; */
 }
-/* #input {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    height: 0px;
-} */
+
 .v-row {
   height: 100%;
 }
@@ -168,7 +176,9 @@ export default {
 .v-card {
   width: 100%;
 }
-/* #message-box{
-    width: 50%;
-} */
+.v-textarea{
+  /* position: fixed;
+  bottom: 0; */
+  height: 7rem;
+} 
 </style>
