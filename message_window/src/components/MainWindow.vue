@@ -17,7 +17,7 @@
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
       <div id="message-content" v-bind:style="messageCon">
-        <v-list full-height color="purple lighten-3" class="scrollable" ref="messageContent">
+        <v-list full-height color="purple lighten-3" class="scrollable" ref="messageList" id="messageList">
           <div
             v-for="(item, index) in messages"
             :key="index"
@@ -97,7 +97,7 @@ export default {
       messageCon: {},
       inputText: "",
       messages:
-        [" Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post."],
+        [" Regardless of whether the asynchronous operation completes immediately orinvocation"],
     };
   },
 
@@ -105,24 +105,22 @@ export default {
     // const io=require('socket.io-client');
 
     // var socket = io();
-    socket.on('chat message', (msg) => {
-      this.messages.push(msg);
-      console.log(msg);
+    socket.on('new message', (msg) => {
+        // const usename = msg.usename;
+      this.messages.push(msg.message);
     })
   },
 
   updated() {
-      var container = this.$refs.messageContent;
-      console.log(container);
-      container.scrollDown = container.scrollHeight;
+    //   var container = this.$refs.messageList;
+          var container = this.$el.querySelector('#messageList');
+        container.scrollTop = container.scrollHeight;
   },
 
   methods: {
     send(){
       this.messages.push(this.inputText);
-
-      //console.log(this.inputText);
-      socket.emit('chat message', this.inputText);
+      socket.emit('new message', this.inputText);
     }
   },
 };
