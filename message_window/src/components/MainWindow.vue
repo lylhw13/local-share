@@ -17,13 +17,13 @@
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
       <div id="message-content" v-bind:style="messageCon">
-        <v-list full-height color="purple lighten-3" class="scrollable">
+        <v-list full-height color="purple lighten-3" class="scrollable" ref="messageContent">
           <div
-            v-for="n in 10"
-            :key="n"
+            v-for="(item, index) in messages"
+            :key="index"
             outlined
             class="primary pa-2 ma-2 d-flex flex-row"
-            :class="n % 2 === 1 ? '' : 'flex-row-reverse'"
+            :class="index % 2 === 1 ? '' : 'flex-row-reverse'"
           >
             <div
               id="message-box"
@@ -35,13 +35,13 @@
                 border-top-right-radius: 1rem;
               "
               :style="
-                n % 2 === 1
+                index % 2 === 1
                   ? `border-bottom-right-radius: 1rem;`
                   : `border-bottom-left-radius: 1rem;`
               "
             >
-              flex item {{ n }}
-              {{ message }}
+              {{ index }}
+              {{ item }}
             </div>
           </div>
           <!-- <v-list-item v-for="n in 3" :key="n"> -->
@@ -66,7 +66,7 @@
         </v-list-item> -->
         </v-list>
       </div>
-      <div>
+      <div class="inputArea">
         <v-textarea id="input"
           backgroud-color="blue"
           color="cyan"
@@ -74,22 +74,56 @@
           no-resize
           outlined
           placeholder="Input your message..."
+          v-model="inputText"
         >
-          {{ message }}
+          {{ inputText }}
         </v-textarea>
+
+        <v-btn v-on:click="send">
+          发送
+        </v-btn>
       </div>
     </div>
   </v-container>
 </template>
 
 <script>
+const io = require('socket.io-client');
+var socket = io();
+
 export default {
   data() {
     return {
       messageCon: {},
-      message:
-        " Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post.",
+      inputText: "",
+      messages:
+        [" Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using post."],
     };
+  },
+
+  mounted() {
+    // const io=require('socket.io-client');
+
+    // var socket = io();
+    socket.on('chat message', (msg) => {
+      this.messages.push(msg);
+      console.log(msg);
+    })
+  },
+
+  updated() {
+      var container = this.$refs.messageContent;
+      console.log(container);
+      container.scrollDown = container.scrollHeight;
+  },
+
+  methods: {
+    send(){
+      this.messages.push(this.inputText);
+
+      //console.log(this.inputText);
+      socket.emit('chat message', this.inputText);
+    }
   },
 };
 </script>
@@ -114,6 +148,11 @@ export default {
 #message-content {
   background-color: dark;
   flex: 1;
+}
+
+.inputArea {
+  display: flex;
+  flex: row;
 }
 
 .v-textarea {
