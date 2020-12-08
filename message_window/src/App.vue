@@ -9,8 +9,13 @@
       <span class="font-weight-light">Local</span>
       <span>Share</span>
     </v-app-bar> -->
-  <v-main>
+  <!-- <v-main>
   <MainWindow/>
+  </v-main> -->
+  <v-main>
+    <router-link to="/"></router-link>
+    <router-link to="/login"></router-link>
+    <router-view></router-view>
   </v-main>
   </v-app>
 </template>
@@ -19,7 +24,7 @@
 // import HelloWorld from './components/HelloWorld';
 // import Home from './views/Home';
 // import Home from './views/Home.vue';
-import MainWindow from './components/MainWindow';
+// import MainWindow from './components/MainWindow';
 
 export default {
   name: 'App',
@@ -28,7 +33,7 @@ export default {
     // HelloWorld,
     // Home
     // Home
-    MainWindow
+    // MainWindow
   },
 
   data: () => ({

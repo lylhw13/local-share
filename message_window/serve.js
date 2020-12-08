@@ -28,9 +28,8 @@ io.on('connection', (socket) => {
     console.log(socket);
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
-      // username: socket.username,
-      username: "123",
-      address: socket.address,
+      username: socket.username,
+      // address: socket.address,
       message: data
     });
   });
