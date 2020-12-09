@@ -1,6 +1,6 @@
 <template>
     <v-container fill-height d-flex flex-column>
-        <span id="title">Login in page</span>
+        <span id="title">Setting page</span>
         <div id="content"
         >
         <v-flex d-flex align-center flex-column>          
@@ -36,7 +36,7 @@
                 v-model="password">
 
             </v-text-field>
-        <v-btn v-on:click="login" align-center>login</v-btn>
+        <v-btn v-on:click="login" align-center>Setting</v-btn>
         </v-flex>
         </div>
         
@@ -54,12 +54,6 @@ export default {
             }
 
         }
-    },
-    beforeCreate() {
-        
-    },
-    mounted() {
-        
     },
     methods: {
         login () {

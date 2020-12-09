@@ -72,6 +72,11 @@ export default {
   },
 
   mounted() {
+      if ( !this.$store.loginstate ) {
+          
+          this.$router.push("/login");
+      }
+
     socket.on('new message', (msg) => {
       this.messages.push(msg.message);
     })
