@@ -30,6 +30,7 @@
           </div>
         </v-list>
       </div>
+
       <div class="inputArea">
         <v-textarea id="input"
           backgroud-color="blue"
@@ -84,15 +85,15 @@ export default {
 
   methods: {
     send(){
-        if (inputText) { return }
+        if (!this.inputText) { return }
     
-    const msg = {
-        message: this.inputText,
-        //   time: "2020-10-01",
-        //   receive: false,
-          nickname: this.$store.username,
-        //   type: "",
-    }
+    // const msg = {
+    //     message: this.inputText,
+    //     //   time: "2020-10-01",
+    //     //   receive: false,
+    //       nickname: this.$store.username,
+    //     //   type: "",
+    // }
       this.messages.push(this.inputText);
       socket.emit('new message', this.inputText);
 
@@ -113,6 +114,7 @@ export default {
 }
 #main {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;

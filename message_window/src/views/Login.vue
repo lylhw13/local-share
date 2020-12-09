@@ -1,11 +1,45 @@
 <template>
-    <v-container>
-        <span>login page</span>
-        <!-- <v-textarea placeholder="Please Input Your Name..." v-model="username" v-on:keyup.enter="setUsername" outlined rows="1">
-        </v-textarea> -->
-        <v-input v-on:keyup.enter="setUsername" v-model="username" type="text">
-        <!-- <v-btn v-on:click="setUsername"></v-btn> -->
-        <!-- <input @keyup.enter="login" v-model.trim="name" type="text" autofocus> -->
+    <v-container fill-height d-flex flex-column>
+        <span id="title">Login in page</span>
+        <div id="content"
+        >
+        <v-flex d-flex align-center flex-column>          
+            <v-text-field 
+                clearable
+                clear-icon="mdi-close-circle"
+                label="username"
+                rows="1"
+                no-resize
+                maxlength="32"
+                :rules="rules.notempty"
+                required
+                outlined
+                dense
+                color="orange"
+                background-color="light-blue"                
+                xs12 sm6 md4
+                v-model="username">
+
+            </v-text-field>
+
+            <v-text-field 
+                clearable
+                clear-icon="mdi-close-circle"
+                label="Password"
+                rows="1"
+                no-resize
+                maxlength="32"
+                :rules="rules.notempty"
+                required
+                outlined
+                dense
+                v-model="password">
+
+            </v-text-field>
+        <v-btn v-on:click="login" align-center>login</v-btn>
+        </v-flex>
+        </div>
+        
     </v-container>
 </template>
 
@@ -13,15 +47,49 @@
 export default {
     data(){
         return {
-            username: this.username
+            username: this.username,
+
+            rules: {
+                notempty: [val => (val || '').length > 0 || 'This field is required'],
+            }
+
         }
     },
     methods: {
-        setUsername () {
-            // if (!this.username) { return}
+        login () {
+            if(!this.username || !this.password) { return }
+
             console.log("username is " + this.username);
+            console.log("password is " + this.password);
             this.$store.commit("setUsername", this.username);
+
+            //if password is right
+            this.$router.push('/');
         }
     },
 }
 </script>
+
+<style scoped>
+.v-text-field {
+    width: 100%;
+}
+
+#title {
+    font-size: 20px;
+    padding: 5rem;
+}
+
+.full_width {
+    width: 100%;
+}
+
+.half_width {
+    width: 50%;
+}
+
+#content {
+    width: 100%;
+    background-color: aqua;
+}
+</style>

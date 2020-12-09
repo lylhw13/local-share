@@ -25,7 +25,10 @@ io.on('connection', (socket) => {
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {
-    console.log(socket);
+    // console.log(socket);
+    // var address = socket.handshake.address;
+    // console.log("New connection from " + address.address + ":" + address.port);
+    console.log(socket.request.connection.remoteAddress);
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
       username: socket.username,
