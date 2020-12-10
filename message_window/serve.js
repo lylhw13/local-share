@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+// const { set } = require('vue/types/umd');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 // const port = process.env.PORT || 10001;
@@ -81,3 +82,41 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+app.use(express.json())
+let password = ""
+let usernames = new Map();
+
+// setting password
+app.post('/api/setting', (req, res) => {
+  // console.log(req);
+  res.send("api server");
+  console.log(req.body);
+  username = req.body.username
+  password = req.body.password
+})
+
+
+// check password
+app.post('/api/login', (req, res) => {
+  console.log("login");
+  const currpasswd = req.body.password
+  const currusername = req.body.username
+
+  if (currpasswd !== password) {
+    return res.status(401).send({
+      message: "密码错误！"
+    })
+  }
+
+  if (usernames.has(currusername)) {
+    return res.status(409).send({
+      message: "该用户名已经存在，请选择新的用户名！"
+    })
+  }
+  console.log(req.get('host'));
+  usernames.set(currusername, req.get('host'))
+  // const username = req.body.username
+})
+
+

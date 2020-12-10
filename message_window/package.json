@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "getmac": "^5.17.0",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4",
     "vue": "^2.6.11",

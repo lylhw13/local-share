@@ -1,13 +1,14 @@
 <template>
     <v-container fill-height d-flex flex-column>
-        <span id="title">Login in page</span>
+            
+        <span id="title">{{pageTitle}}</span>
         <div id="content"
         >
         <v-flex d-flex align-center flex-column>          
             <v-text-field 
                 clearable
                 clear-icon="mdi-close-circle"
-                label="username"
+                label="Please input your nickname..."
                 rows="1"
                 no-resize
                 maxlength="32"
@@ -19,13 +20,12 @@
                 background-color="light-blue"                
                 xs12 sm6 md4
                 v-model="username">
-
             </v-text-field>
 
             <v-text-field 
                 clearable
                 clear-icon="mdi-close-circle"
-                label="Password"
+                label="Pleas input password..."
                 rows="1"
                 no-resize
                 maxlength="32"
@@ -36,27 +36,52 @@
                 v-model="password">
 
             </v-text-field>
-        <v-btn v-on:click="login" align-center>login</v-btn>
+        <v-btn v-on:click="login" align-center>{{btnTxt}}</v-btn>
         </v-flex>
         </div>
+
+        <v-alert
+      v-model="alert"
+      border="left"
+      close-text="Close Alert"
+      color="deep-purple accent-4"
+      dark
+      dismissible
+    >
+</v-alert>
         
     </v-container>
+
+
 </template>
 
 <script>
+const axios = require('axios')
 
 export default {
     data(){
         return {
-            username: this.username,
+            username: "",
+            password: "",
+            pageTitle: this.isServerPage? "Server Setting": "Please login",
+            btnTxt: this.isServerPage? "Setting": "Login",
+            alert: false,
             rules: {
                 notempty: [val => (val || '').length > 0 || 'This field is required'],
             }
-
         }
     },
     beforeCreate() {
-        
+        this.isServerPage = false;
+        console.log((new URL(window.location.href)).hostname)
+        window.location.href.hostname
+        const currentUrl = new URL(window.location.href);
+        console.log("hostname is " + currentUrl.hostname)
+        console.log("port is " + currentUrl.port)
+        if (currentUrl.hostname === "127.0.0.1") {
+            this.isServerPage = true
+            console.log("server page")
+        }
     },
     mounted() {
         
@@ -67,10 +92,45 @@ export default {
 
             console.log("username is " + this.username);
             console.log("password is " + this.password);
-            this.$store.commit("setUsername", this.username);
+            console.log(this.isServerPage)
 
             //if password is right
-            this.$router.push('/MessageWindow');
+            // this.$router.push('/MessageWindow');
+            let url = "/api/login";
+
+            // if (this.isServerPage) {
+            //     url = "/api/setting";
+            // }
+            const that = this
+            console.log("axios")
+                //setting password
+                axios({
+                    method: 'post',
+                    url: url,
+                    data: {
+                        username: this.username,
+                        password: this.password
+                    }
+                })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                    if (error.response.status == 401) {
+                        that.password = "";
+                    }
+                    else if (error.response.status == 409) {
+                        that.username = "";
+                    }
+                    // that.alert = true
+                    alert(that.message)
+                })
+
+
+                // checking password
+                this.$store.commit("setUsername", this.username);
+                // this.$router.push('/MessageWindow');
         }
     },
 }
