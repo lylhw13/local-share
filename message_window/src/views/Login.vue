@@ -70,7 +70,7 @@ export default {
             this.$store.commit("setUsername", this.username);
 
             //if password is right
-            this.$router.push('/');
+            this.$router.push('/MessageWindow');
         }
     },
 }

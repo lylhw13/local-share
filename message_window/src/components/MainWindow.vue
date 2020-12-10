@@ -56,6 +56,8 @@
 const io = require('socket.io-client');
 var socket = io();
 
+// const socket = require("../socket");
+
 export default {
   data() {
     return {
@@ -72,10 +74,9 @@ export default {
   },
 
   mounted() {
-      if ( !this.$store.loginstate ) {
-          
-          this.$router.push("/login");
-      }
+      // if ( !this.$store.loginstate ) {
+      //     this.$router.push("/login");
+      // }
 
     socket.on('new message', (msg) => {
       this.messages.push(msg.message);

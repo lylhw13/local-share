@@ -1,3 +1,5 @@
-const io = require("socket.io-client")
+import io from "socket.io-client"
 
-// var socket = io.connect();
+const socket = io.connect();
+
+export default socket;
