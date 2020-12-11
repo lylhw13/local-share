@@ -10,6 +10,10 @@
             class="primary pa-2 ma-2 d-flex flex-row"
             :class="{'flex-row-reverse': item.receive}"
           >
+          <v-avatar color="red" >
+            <span class="white--text headline">{{username[0].toUpperCase()}}</span>
+          </v-avatar>
+          
             <div
               id="message-box"
               outline
@@ -63,20 +67,28 @@ export default {
     return {
       messageCon: {},
       inputText: "",
+      username: "周杰伦",
       messages: [{
           message:"",
         //   time: "2020-10-01",
         //   receive: false,
-          nickname: "hello",
+          username: "hello",
+          color: "",
         //   type: "",
       }]
     };
   },
 
-  mounted() {
+  beforeCreate() {
       // if ( !this.$store.loginstate ) {
       //     this.$router.push("/login");
       // }
+      // this.username = this.$store.username[0].toUpperCase
+      this.username = "hello"[0].toUpperCase;
+  },
+
+  mounted() {
+
 
     socket.on('new message', (msg) => {
       this.messages.push(msg.message);
@@ -84,8 +96,7 @@ export default {
   },
 
   updated() {
-    //   var container = this.$refs.messageList;
-          var container = this.$el.querySelector('#messageList');
+        var container = this.$el.querySelector('#messageList');
         container.scrollTop = container.scrollHeight;
   },
 
@@ -103,7 +114,8 @@ export default {
       this.messages.push(this.inputText);
       socket.emit('new message', this.inputText);
 
-    }
+    },
+
   },
 };
 </script>

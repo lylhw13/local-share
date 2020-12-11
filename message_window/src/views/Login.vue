@@ -98,12 +98,12 @@ export default {
             // this.$router.push('/MessageWindow');
             let url = "/api/login";
 
-            // if (this.isServerPage) {
-            //     url = "/api/setting";
-            // }
+            if (this.isServerPage) {
+                url = "/api/setting";
+            }
+
             const that = this
             console.log("axios")
-                //setting password
                 axios({
                     method: 'post',
                     url: url,
@@ -130,7 +130,7 @@ export default {
 
                 // checking password
                 this.$store.commit("setUsername", this.username);
-                // this.$router.push('/MessageWindow');
+                this.$router.push('/MessageWindow');
         }
     },
 }

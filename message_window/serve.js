@@ -25,9 +25,7 @@ io.on('connection', (socket) => {
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {
-    // console.log(socket);
-    // var address = socket.handshake.address;
-    // console.log("New connection from " + address.address + ":" + address.port);
+
     console.log(socket.request.connection.remoteAddress);
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
@@ -79,43 +77,52 @@ io.on('connection', (socket) => {
         username: socket.username,
         numUsers: numUsers
       });
+
+      if (numUsers === 0) {
+        console.log("curr process is " + process.pid + " there is no user");
+        process.exit()
+      }
     }
   });
 });
 
 app.use(express.json())
-let password = ""
-let usernames = new Map();
+let g_password = ""
+let userinfos = new Map();  // nickname host
 
 // setting password
 app.post('/api/setting', (req, res) => {
-  // console.log(req);
   res.send("api server");
   console.log(req.body);
+
+  if (req.get('host') !== "127.0.0.1") { return }
+
   username = req.body.username
-  password = req.body.password
+  g_password = req.body.password
 })
 
 
 // check password
 app.post('/api/login', (req, res) => {
   console.log("login");
-  const currpasswd = req.body.password
-  const currusername = req.body.username
+  const c_passwd = req.body.password
+  const c_username = req.body.username
+  const c_url = req.get('host')
+  console.log(c_url)
 
-  if (currpasswd !== password) {
+  if (c_passwd !== g_password) {
     return res.status(401).send({
       message: "密码错误！"
     })
   }
 
-  if (usernames.has(currusername)) {
+  if (userinfos.has(c_username) && userinfos.get(c_username) !== c_url) {
     return res.status(409).send({
       message: "该用户名已经存在，请选择新的用户名！"
     })
   }
-  console.log(req.get('host'));
-  usernames.set(currusername, req.get('host'))
+
+  userinfos.set(c_username, c_url)
   // const username = req.body.username
 })
 
