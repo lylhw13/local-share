@@ -2,7 +2,5 @@ const COLORS = ["red", "pink", "purple", "deep-purple", "indigo", "blue", "light
                 "orange", "deep-orange", "brown"]
 
 export function pickcolor() {
-    return COLORS[Math.floor(Math.random() * Math.length)];
+    return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
-
-// export default pickcolor;

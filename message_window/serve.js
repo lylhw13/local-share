@@ -2,7 +2,6 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-// const { set } = require('vue/types/umd');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 // const port = process.env.PORT || 10001;
@@ -28,11 +27,12 @@ io.on('connection', (socket) => {
 
     console.log(socket.request.connection.remoteAddress);
     // we tell the client to execute 'new message'
-    socket.broadcast.emit('new message', {
-      username: socket.username,
-      // address: socket.address,
-      message: data
-    });
+    // socket.broadcast.emit('new message', {
+    //   username: socket.username,
+    //   // address: socket.address,
+    //   message: data
+    // });
+    socket.broadcast.emit('new message', data);
   });
 
   // when the client emits 'add user', this listens and executes
@@ -87,7 +87,8 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json())
-let g_password = ""
+var g_password = ""
+var g_username = ""
 let userinfos = new Map();  // nickname host
 
 // setting password
@@ -95,34 +96,44 @@ app.post('/api/setting', (req, res) => {
   res.send("api server");
   console.log(req.body);
 
-  if (req.get('host') !== "127.0.0.1") { return }
+  if (req.ip !== "127.0.0.1") { 
+    return res.status(401).send({
+      message: "Only the host can set password!"
+    })
+  }
 
-  username = req.body.username
+  g_username = req.body.username
   g_password = req.body.password
+
+  //make all already login state false
 })
 
 
 // check password
 app.post('/api/login', (req, res) => {
   console.log("login");
-  const c_passwd = req.body.password
-  const c_username = req.body.username
+  const data = req.body
+  const c_username = data.username
   const c_url = req.get('host')
   console.log(c_url)
 
-  if (c_passwd !== g_password) {
+  if (data.password !== g_password) {
     return res.status(401).send({
       message: "密码错误！"
     })
   }
 
-  if (userinfos.has(c_username) && userinfos.get(c_username) !== c_url) {
+  if (c_username !== g_username && userinfos.has(c_username) && userinfos.get(c_username).url !== c_url) {
     return res.status(409).send({
       message: "该用户名已经存在，请选择新的用户名！"
     })
   }
 
-  userinfos.set(c_username, c_url)
+  userinfos.set(c_username, {
+    "username": c_username,
+    "color": data.color,
+    "url": c_url
+  });
   // const username = req.body.username
 })
 

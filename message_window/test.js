@@ -1,4 +1,4 @@
-import {pickcolor} from './colors'
+import {pickcolor} from './colors.js'
 
 console.log(pickcolor())
 

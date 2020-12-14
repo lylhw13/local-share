@@ -1,29 +1,38 @@
 <template>
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
-      <div id="message-content" v-bind:style="messageCon">
+      <div id="messages-window" v-bind:style="messageCon">
         <v-list full-height color="purple lighten-3" class="scrollable" id="messageList">
           <div
             v-for="(item, index) in messages"
             :key="index"
             outlined
+            id="message-row"
             class="primary pa-2 ma-2 d-flex flex-row"
             :class="{'flex-row-reverse': item.receive}"
           >
-          <v-avatar color="red" >
-            <span class="white--text headline">{{username[0].toUpperCase()}}</span>
-          </v-avatar>
-          
-            <div
-              id="message-box"
+          <div style="background-color: white;" class="d-flex align-end">
+            <v-avatar v-bind:color="item.color">
+              <span class="white--text headline">{{username[0].toUpperCase()}}</span>
+            </v-avatar>
+          </div>
+          <div id="message-box" class="ma-1 mb-6 red d-flex"
+            :class="{'align-end':item.receive}">
+              <div id="message-title">
+                <span>{{item.username}}</span>
+                <span>{{toFormatDate(item.time)}}</span>
+              </div>
+
+              <div
+              id="message-content"
               outline
-              class="pa-2 orange"
+              class="pa-1 orange"
               style="
                 max-width: 60%;
                 border-top-left-radius: 1rem;
                 border-top-right-radius: 1rem;
               "
-              :style=" item.receive ? `border-bottom-right-radius: 1rem;` : `border-bottom-left-radius: 1rem;`
+              :style=" item.receive ? `border-bottom-left-radius: 1rem;` : `border-bottom-right-radius: 1rem;`
               "
             >
               {{ index }}
@@ -31,6 +40,11 @@
               nickname is {{ item.nickname }},
               message is {{item.message}}
             </div>
+
+          </div>
+
+          
+
           </div>
         </v-list>
       </div>
@@ -60,8 +74,6 @@
 const io = require('socket.io-client');
 var socket = io();
 
-// const socket = require("../socket");
-
 export default {
   data() {
     return {
@@ -69,12 +81,12 @@ export default {
       inputText: "",
       username: "周杰伦",
       messages: [{
-          message:"",
-        //   time: "2020-10-01",
-        //   receive: false,
+          message:"hahah",
+          time: Date.now(),
+          receive: true,  
           username: "hello",
-          color: "",
-        //   type: "",
+          color: "red",
+          type: "text",
       }]
     };
   },
@@ -83,15 +95,21 @@ export default {
       // if ( !this.$store.loginstate ) {
       //     this.$router.push("/login");
       // }
-      // this.username = this.$store.username[0].toUpperCase
-      this.username = "hello"[0].toUpperCase;
   },
 
   mounted() {
 
 
+    // new message
     socket.on('new message', (msg) => {
-      this.messages.push(msg.message);
+      msg.receive = true;
+      this.messages.push(msg);
+    }),
+
+    // cancel all login state
+    socket.on('change host password', () => {
+      this.$store.commit("setLoginState", false);
+      this.$router.push("/");
     })
   },
 
@@ -102,19 +120,23 @@ export default {
 
   methods: {
     send(){
-        if (!this.inputText) { return }
-    
-    // const msg = {
-    //     message: this.inputText,
-    //     //   time: "2020-10-01",
-    //     //   receive: false,
-    //       nickname: this.$store.username,
-    //     //   type: "",
-    // }
+      if (!this.inputText) { return }
       this.messages.push(this.inputText);
-      socket.emit('new message', this.inputText);
-
+      const msg = {
+        message: this.inputText,
+        time: Date.now(),
+        receive: false,
+        username: this.username,
+        color: this.$store.color,
+        type: "text"
+      }
+      socket.emit('new message', msg);
     },
+
+    toFormatDate(time) {
+      var dateFormat = require('dateformat');
+      return dateFormat(time, "yyyy mm dd HH:MM");
+    }
 
   },
 };
@@ -138,9 +160,20 @@ export default {
   align-items: stretch;
   justify-content: space-between;
 }
-#message-content {
+#messages-window {
   background-color: dark;
   flex: 1;
+}
+
+#message-row {
+  /* display: flex; */
+  /* flex-direction: row; */
+}
+
+#message-box {
+  display: flex;
+  flex-direction: column;
+  /* margin-bottom: 1.5rem; */
 }
 
 .inputArea {
