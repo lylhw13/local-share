@@ -18,7 +18,7 @@ export default new Vuex.Store({
     },
     setColor(state, color) {
       state.color = color;
-    }
+    },
   },
   actions: {
   },

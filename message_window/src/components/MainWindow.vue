@@ -20,7 +20,7 @@
             :class="{'align-end':item.receive}">
               <div id="message-title">
                 <span>{{item.username}}</span>
-                <span>{{toFormatDate(item.time)}}</span>
+                <span class="font-weight-light">{{toFormatDate(item.time)}}</span>
               </div>
 
               <div
@@ -135,7 +135,7 @@ export default {
 
     toFormatDate(time) {
       var dateFormat = require('dateformat');
-      return dateFormat(time, "yyyy mm dd HH:MM");
+      return dateFormat(time, "mm-dd HH:MM");
     }
 
   },
@@ -145,7 +145,7 @@ export default {
 <style scoped>
 .scrollable {
   overflow-y: auto;
-  height: calc(100vh - 7rem);
+  height: calc(90vh - 7rem);
 }
 .v-container {
   background-color: bisque;

@@ -39,7 +39,7 @@
         </v-text-field>
 
         <v-card outlined width="100%" class="">
-          <v-div class="full_div pa-1">
+          <div class="full_div pa-1">
             <span class="title pl-2 text-body-1">Click avatar to set color...</span>
             <v-dialog v-model="dialog" max-width="300">
               <template v-slot:activator="{ on, attrs }">
@@ -57,7 +57,7 @@
 
               <v-color-picker v-model="color" show-swatches swatches-max-height="200"> </v-color-picker>
             </v-dialog>
-          </v-div>
+          </div>
         </v-card>
         <v-btn v-on:click="login" align-center>{{ btnTxt }}</v-btn>
       </v-flex>
