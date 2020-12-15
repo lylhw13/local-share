@@ -9,14 +9,14 @@
             outlined
             id="message-row"
             class="primary pa-0 ma-1 d-flex flex-row"
-            :class="{'flex-row-reverse': item.receive}"
+            :class="{'flex-row-reverse': !item.receive}"
           >
           <div style="background-color: white;" class="d-flex align-end">
             <v-avatar v-bind:color="item.color">
               <span class="white--text headline">{{(item.username[0].toUpperCase())}}</span>
             </v-avatar>
           </div>
-          <div id="message-box" class="ma-0 mb-6 ml-1 red d-flex"
+          <div id="message-box" class="ma-0 mb-6 ml-1 mr-1 red d-flex"
             :class="{'align-end':item.receive}">
               <div id="message-title">
                 <span v-bind:color="item.color">{{item.username}}&emsp;</span>
