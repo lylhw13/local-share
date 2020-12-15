@@ -6,10 +6,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/MessageWindow',
+    path: '/messagewindow',
     name: 'MessageWindow',
     // component: Home
-    component: () => import("../components/MainWindow.vue")
+    component: () => import("../views/MainWindow.vue")
   },
   {
     path: '/about',

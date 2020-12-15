@@ -8,19 +8,19 @@
             :key="index"
             outlined
             id="message-row"
-            class="primary pa-2 ma-2 d-flex flex-row"
+            class="primary pa-0 ma-1 d-flex flex-row"
             :class="{'flex-row-reverse': item.receive}"
           >
           <div style="background-color: white;" class="d-flex align-end">
             <v-avatar v-bind:color="item.color">
-              <span class="white--text headline">{{username[0].toUpperCase()}}</span>
+              <span class="white--text headline">{{(item.username[0].toUpperCase())}}</span>
             </v-avatar>
           </div>
-          <div id="message-box" class="ma-1 mb-6 red d-flex"
+          <div id="message-box" class="ma-0 mb-6 ml-1 red d-flex"
             :class="{'align-end':item.receive}">
               <div id="message-title">
-                <span>{{item.username}}</span>
-                <span class="font-weight-light">{{toFormatDate(item.time)}}</span>
+                <span v-bind:color="item.color">{{item.username}}&emsp;</span>
+                <span class="font-weight-light caption">{{toFormatDate(item.time)}}</span>
               </div>
 
               <div
@@ -36,9 +36,7 @@
               "
             >
               {{ index }}
-              <!-- time is {{item.time}}, -->
-              nickname is {{ item.nickname }},
-              message is {{item.message}}
+              {{item.message}}
             </div>
 
           </div>
@@ -79,27 +77,36 @@ export default {
     return {
       messageCon: {},
       inputText: "",
-      username: "周杰伦",
-      messages: [{
-          message:"hahah",
-          time: Date.now(),
-          receive: true,  
-          username: "hello",
-          color: "red",
-          type: "text",
-      }]
+      // username: "",
+      messages: [],
+    //   username: "周杰伦"
+    //   messages: [{
+    //       message:"hahah",
+    //       time: Date.now(),
+    //       receive: true,  
+    //       username: "hello",
+    //       color: "red",
+    //       type: "text",
+    //   }]
     };
   },
 
   beforeCreate() {
-      // if ( !this.$store.loginstate ) {
-      //     this.$router.push("/login");
-      // }
+      if ( !this.$store.state.loginState ) {
+          this.$router.push("/");
+      }
+  },
+
+  computed: {
+    username(){
+      return this.$store.state.username;
+    },
+    color() {
+      return this.$store.state.color;
+    }
   },
 
   mounted() {
-
-
     // new message
     socket.on('new message', (msg) => {
       msg.receive = true;
@@ -121,15 +128,18 @@ export default {
   methods: {
     send(){
       if (!this.inputText) { return }
-      this.messages.push(this.inputText);
+      
       const msg = {
         message: this.inputText,
         time: Date.now(),
         receive: false,
         username: this.username,
-        color: this.$store.color,
+        color: this.color,
         type: "text"
       }
+
+      // console.log("color is " + msg.color)
+      this.messages.push(msg);
       socket.emit('new message', msg);
     },
 

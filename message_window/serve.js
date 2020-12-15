@@ -104,6 +104,9 @@ app.post('/api/setting', (req, res) => {
   g_username = req.body.username
   g_password = req.body.password
 
+  console.log("g_username is " + g_username)
+  console.log("g_password is " + g_password)
+
   return res.status(200).send({
     serverIp: getLoaclIp()
   })
@@ -119,13 +122,14 @@ app.post('/api/login', (req, res) => {
   const c_url = req.get('host')
   console.log(c_url)
 
+
   if (data.password !== g_password) {
     return res.status(401).send({
       message: "密码错误！"
     })
   }
 
-  if (c_username !== g_username && userinfos.has(c_username) && userinfos.get(c_username).url !== c_url) {
+  if (c_username === g_username || (userinfos.has(c_username) && userinfos.get(c_username).url !== c_url)) {
     return res.status(409).send({
       message: "该用户名已经存在，请选择新的用户名！"
     })
@@ -136,6 +140,10 @@ app.post('/api/login', (req, res) => {
     "color": data.color,
     "url": c_url
   });
+
+  return res.status(200).send({
+    message: "OK"
+  })
   // const username = req.body.username
 })
 

@@ -4,6 +4,7 @@
     <v-main>
       <router-link to="/"></router-link>
       <router-link to="/login"></router-link>
+      <router-link to="/messagewindow"></router-link>
       <router-view></router-view>
     </v-main>
   </v-app>

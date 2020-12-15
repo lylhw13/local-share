@@ -92,17 +92,27 @@ export default {
   },
   beforeCreate() {
     this.isServerPage = false;
-    console.log(new URL(window.location.href).hostname);
+    // console.log(new URL(window.location.href).hostname);
     const currentUrl = new URL(window.location.href);
-    console.log("hostname is " + currentUrl.hostname);
-    console.log("port is " + currentUrl.port);
+    // console.log("hostname is " + currentUrl.hostname);
+    // console.log("port is " + currentUrl.port);
     if (currentUrl.hostname === "127.0.0.1") {
       this.isServerPage = true;
-      console.log("server page");
+    //   console.log("server page");
     }
   },
-  mounted() {
-    
+  computed: {
+      loginState() {
+            return this.$store.state.loginState;
+      }
+  },
+  watch:{
+    loginState: function(val){
+        if (val) {
+            // this.$router.push("/MessageWindow");
+            console.log("watch")
+        }
+    }
   },
   methods: {
     login() {
@@ -113,6 +123,11 @@ export default {
       console.log("username is " + this.username);
       console.log("password is " + this.password);
       console.log(this.isServerPage);
+
+    //         this.$store.commit("setUsername", this.username);
+    //         this.$store.commit("setLoginState", true);
+    //         console.log("log state is " + this.$store.state.loginState)
+    //         this.$router.push("/messagewindow");
 
       let url = "/api/login";
 
@@ -133,32 +148,45 @@ export default {
       })
         .then(function (response) {
           console.log("response " + response.data.serverIp);
-
+            
           if (that.isServerPage) {
             that.$store.commit("setServerIp", response.data.serverIp)
             console.log("srever ip is" + that.$store.state.serverIp)
           }
+
+            // checking password
+            // that.$store.commit("setUsername", that.username);
+            // that.$store.commit("setLoginState", true);
+            // console.log("log state is " + that.$store.state.loginState)
+            // that.$router.push("/MessageWindow");
+            that.$store.commit("setUsername", that.username);
+            that.$store.commit("setLoginState", true);
+            that.$store.commit("setColor", that.color);
+            console.log("usename is " + that.$store.state.username);
+            console.log("log state is " + that.$store.state.loginState);
+            that.$router.push("/messagewindow");
         })
         .catch(function (error) {
           console.log("error " + error);
-          console.log("error response " + error.response)
-          if (error.response.status == 401) {
+          console.log("error response ")
+          console.log(error.response.data)
+          if (error.response.status === '401') {
             that.password = "";
-          } else if (error.response.status == 409) {
+          } else if (error.response.status === '409') {
             that.username = "";
           }
           // that.alert = true
-          alert(that.message);
+          alert(error.response.data.message);
         //   return;
         });
 
-      // checking password
-      this.$store.commit("setUsername", this.username);
-      this.$store.commit("setLoginState", true);
-      console.log("log state is " + this.$store.state.loginState)
-      this.$router.push("/MessageWindow");
+            // this.$store.commit("setUsername", this.username);
+            // this.$store.commit("setLoginState", true);
+            // this.$store.commit("setColor", this.color);
+            // console.log("usename is " + this.$store.state.username);
+            // console.log("log state is " + this.$store.state.loginState);
+            // this.$router.push("/messagewindow");
     },
-
 
   },
 };
@@ -180,7 +208,6 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: row;
-  /* background-color: grey; */
   justify-content: space-between;
 }
 
