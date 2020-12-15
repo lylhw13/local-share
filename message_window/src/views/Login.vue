@@ -149,12 +149,13 @@ export default {
           }
           // that.alert = true
           alert(that.message);
-          return;
+        //   return;
         });
 
       // checking password
       this.$store.commit("setUsername", this.username);
       this.$store.commit("setLoginState", true);
+      console.log("log state is " + this.$store.state.loginState)
       this.$router.push("/MessageWindow");
     },
 
