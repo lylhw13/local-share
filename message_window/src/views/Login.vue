@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height d-flex flex-column>
     <span id="title">{{ pageTitle }}</span>
-    <div id="content">
+    <div id="content" v-bind:style="$vuetify.breakpoint.mdAndDown ? 'width:100%;' : 'width:50%;'">
       <v-flex d-flex align-center flex-column>
         <v-text-field
           clearable
@@ -13,9 +13,6 @@
           :rules="rules.notempty"
           required
           outlined
-          dense
-          color="orange"
-          background-color="light-blue"
           xs12
           sm6
           md4
@@ -33,14 +30,13 @@
           :rules="rules.notempty"
           required
           outlined
-          dense
           v-model="password"
         >
         </v-text-field>
 
-        <v-card outlined width="100%" class="">
+        <v-card outlined width="100%" color="grey lighten-3">
           <div class="full_div pa-1">
-            <span class="title pl-2 text-body-1">Click avatar to set color...</span>
+            <span class="avater-title pl-2 text-body-1">Click avatar to set color...</span>
             <v-dialog v-model="dialog" max-width="300">
               <template v-slot:activator="{ on, attrs }">
                 <v-avatar
@@ -59,7 +55,8 @@
             </v-dialog>
           </div>
         </v-card>
-        <v-btn v-on:click="login" align-center>{{ btnTxt }}</v-btn>
+
+        <v-btn v-on:click="login" class="ma-6 align-center">{{ btnTxt }}</v-btn>
       </v-flex>
     </div>
 
@@ -84,7 +81,7 @@ export default {
       username: "",
       password: "",
       color: "red",
-      pageTitle: this.isServerPage ? "Server Setting" : "Please login",
+      pageTitle: this.isServerPage ? "Server Setting" : "Please Login",
       btnTxt: this.isServerPage ? "Setting" : "Login",
       dialog: false,
       alert: false,
@@ -104,7 +101,9 @@ export default {
       console.log("server page");
     }
   },
-  mounted() {},
+  mounted() {
+    
+  },
   methods: {
     login() {
       if (!this.username || !this.password) {
@@ -133,10 +132,16 @@ export default {
         },
       })
         .then(function (response) {
-          console.log(response);
+          console.log("response " + response.data.serverIp);
+
+          if (that.isServerPage) {
+            that.$store.commit("setServerIp", response.data.serverIp)
+            console.log("srever ip is" + that.$store.state.serverIp)
+          }
         })
         .catch(function (error) {
-          console.log(error.message);
+          console.log("error " + error);
+          console.log("error response " + error.response)
           if (error.response.status == 401) {
             that.password = "";
           } else if (error.response.status == 409) {
@@ -152,6 +157,8 @@ export default {
       this.$store.commit("setLoginState", true);
       this.$router.push("/MessageWindow");
     },
+
+
   },
 };
 </script>
@@ -163,19 +170,8 @@ export default {
 
 #title {
   font-size: 20px;
-  padding: 5rem;
-}
-
-.full_width {
-  width: 100%;
-}
-
-.half_width {
-  width: 50%;
-}
-
-#content {
-  width: 100%;
+  padding: auto;
+  padding-bottom: 2rem;
 }
 
 .full_div {
@@ -183,12 +179,13 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: row;
+  /* background-color: grey; */
   justify-content: space-between;
 }
 
-.title {
+.avater-title {
   display: flex;
-  justify-content: center; /* align horizontal */
-  align-items: center; /* align vertical */
+  justify-content: center;
+  align-items: center; 
 }
 </style>

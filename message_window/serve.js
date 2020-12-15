@@ -93,10 +93,9 @@ let userinfos = new Map();  // nickname host
 
 // setting password
 app.post('/api/setting', (req, res) => {
-  res.send("api server");
   console.log(req.body);
 
-  if (req.ip !== "127.0.0.1") { 
+  if (req.hostname !== "127.0.0.1") { 
     return res.status(401).send({
       message: "Only the host can set password!"
     })
@@ -105,6 +104,9 @@ app.post('/api/setting', (req, res) => {
   g_username = req.body.username
   g_password = req.body.password
 
+  return res.status(200).send({
+    serverIp: getLoaclIp()
+  })
   //make all already login state false
 })
 
@@ -137,4 +139,21 @@ app.post('/api/login', (req, res) => {
   // const username = req.body.username
 })
 
+function getLoaclIp() {
+  var ifaces = require("os").networkInterfaces();
+for (var dev in ifaces) {
+    var iface = ifaces[dev].filter((details) => {
+        return (
+            details.family === "IPv4" &&
+            details.internal === false &&
+            !details.mac.startsWith("00:50:56")
+        );
+    });
+
+    if (iface.length > 0) {
+        address = iface[0].address;
+        return address;
+    }
+}
+}
 

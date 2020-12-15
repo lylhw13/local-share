@@ -5,9 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    username: "",
-    color: "",
+    username: "hello",
+    color: "haha",
     loginState: false,
+    serverIp: "192.168.0.30",
   },
   mutations: {
     setUsername(state, username) {
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     setColor(state, color) {
       state.color = color;
     },
+    setServerIp(state, url) {
+      state.serverIp = url;
+    }
   },
   actions: {
   },
