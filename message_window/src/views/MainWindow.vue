@@ -2,7 +2,7 @@
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
       <div id="messages-window" v-bind:style="messageCon">
-        <v-list full-height color="purple lighten-3" class="scrollable" id="messageList">
+        <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div
             v-for="(item, index) in messages"
             :key="index"
@@ -41,28 +41,32 @@
 
           </div>
 
-          
-
           </div>
         </v-list>
       </div>
 
-      <div class="inputArea">
-        <v-textarea id="input"
-          backgroud-color="blue"
-          color="cyan"
-          rows="3"
-          no-resize
-          outlined
-          placeholder="Input your message..."
-          v-model="inputText"
-        >
-          {{ inputText }}
-        </v-textarea>
+      <div id="input-window" style="background-color:red;" ref="inputWindow">
+          <div style="width:1rem;">
+          <v-file-input chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15">
+          </v-file-input>
+          </div>
 
-        <v-btn v-on:click="send">
-          发送
-        </v-btn>
+          <v-textarea id="input"
+          background-color="primary"
+            color="red"
+            rows="3"
+            no-resize
+            outlined
+            placeholder="Input your message..."
+            v-model="inputText"
+          >
+            {{ inputText }}
+          </v-textarea>
+
+          <v-btn v-on:click="send" class="align-self-end mr-5">
+            发送
+          </v-btn>
+
       </div>
     </div>
   </v-container>
@@ -77,6 +81,7 @@ export default {
     return {
       messageCon: {},
       inputText: "",
+      height:500,
       // username: "",
       messages: [],
     //   username: "周杰伦"
@@ -92,9 +97,9 @@ export default {
   },
 
   beforeCreate() {
-      if ( !this.$store.state.loginState ) {
-          this.$router.push("/");
-      }
+      // if ( !this.$store.state.loginState ) {
+      //     this.$router.push("/");
+      // }
   },
 
   computed: {
@@ -103,6 +108,12 @@ export default {
     },
     color() {
       return this.$store.state.color;
+    },
+    mainHeight() {
+      if (this.$vuetify.breakpoint.lgAndUp)
+        return 90
+      else
+        return 77
     }
   },
 
@@ -117,11 +128,13 @@ export default {
     socket.on('change host password', () => {
       this.$store.commit("setLoginState", false);
       this.$router.push("/");
-    })
+    }),
+
+    this.height =document.getElementById("input-window").offsetHeight
   },
 
   updated() {
-        var container = this.$el.querySelector('#messageList');
+        var container = this.$el.querySelector('#scrollable');
         container.scrollTop = container.scrollHeight;
   },
 
@@ -153,9 +166,9 @@ export default {
 </script>
 
 <style scoped>
-.scrollable {
+#scrollable {
   overflow-y: auto;
-  height: calc(90vh - 7rem);
+  /* height: calc(100vh - 22rem); */
 }
 .v-container {
   background-color: bisque;
@@ -167,17 +180,12 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
+  /* align-items: stretch; */
+  /* justify-content: space-between; */
 }
 #messages-window {
   background-color: dark;
-  flex: 1;
-}
-
-#message-row {
-  /* display: flex; */
-  /* flex-direction: row; */
+  /* flex: 1; */
 }
 
 #message-box {
@@ -186,10 +194,11 @@ export default {
   /* margin-bottom: 1.5rem; */
 }
 
-.inputArea {
+#input-window {
   display: flex;
-  flex: row;
+  flex-direction: column;
 }
+
 
 .v-textarea {
   height: 7rem;
