@@ -147,6 +147,17 @@ app.post('/api/login', (req, res) => {
   // const username = req.body.username
 })
 
+const multer = require("multer")
+var upload = multer({dest: "./temp/"})
+
+app.post('/upload_file', upload.single("file"), (req, res) => {
+  console.log("upload_file")
+  console.log("file: ")
+  console.log(req.file)
+
+  return res.send("upload_file")
+})
+
 function getLoaclIp() {
   var ifaces = require("os").networkInterfaces();
 for (var dev in ifaces) {

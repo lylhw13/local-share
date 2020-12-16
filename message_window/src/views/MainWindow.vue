@@ -47,7 +47,8 @@
 
       <div id="input-window" style="background-color:red;" ref="inputWindow">
           <div style="width:1rem;">
-          <v-file-input chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15">
+          <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15"
+            v-bind:disabled="inputText.length > 0">
           </v-file-input>
           </div>
 
@@ -59,8 +60,8 @@
             outlined
             placeholder="Input your message..."
             v-model="inputText"
+            v-bind:disabled="inputFile.length > 0"
           >
-            {{ inputText }}
           </v-textarea>
 
           <v-btn v-on:click="send" class="align-self-end mr-5">
@@ -73,6 +74,9 @@
 </template>
 
 <script>
+const axios = require("axios");
+// const multer = requirs("multer");
+const FormData = require('form-data');
 const io = require('socket.io-client');
 var socket = io();
 
@@ -81,6 +85,7 @@ export default {
     return {
       messageCon: {},
       inputText: "",
+      inputFile: [],
       height:500,
       // username: "",
       messages: [],
@@ -140,6 +145,26 @@ export default {
 
   methods: {
     send(){
+      
+      var formData = new FormData();
+      for (let file of this.inputFile) {
+        formData.append("file", file, file.name);
+      }
+
+      axios.post("/upload_file", formData)
+            .then(response => {
+              console.log("success")
+              console.log(response)
+            })
+            .catch( error => {
+              console.log("error")
+              console.log(error)
+            })
+
+      if (!this.inputFile) {
+        console.log(this.inputFile);
+        return;
+      }
       if (!this.inputText) { return }
       
       const msg = {
