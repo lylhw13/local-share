@@ -17,27 +17,55 @@
             </v-avatar>
           </div>
           <div id="message-box" class="ma-0 mb-6 ml-1 mr-1 red d-flex"
-            :class="{'align-end':item.receive}">
+            :class="{'align-end': !item.receive}">
               <div id="message-title">
                 <span v-bind:color="item.color">{{item.username}}&emsp;</span>
                 <span class="font-weight-light caption">{{toFormatDate(item.time)}}</span>
               </div>
 
-              <div
-              id="message-content"
-              outline
+              <div outline 
+              v-show="item.type === 'text'"
               class="pa-1 orange"
-              style="
-                max-width: 60%;
-                border-top-left-radius: 1rem;
-                border-top-right-radius: 1rem;
-              "
-              :style=" item.receive ? `border-bottom-left-radius: 1rem;` : `border-bottom-right-radius: 1rem;`
-              "
+              style="max-width: 60%; border-top-left-radius: 1rem; border-top-right-radius: 1rem; "
+              :style=" item.receive ? `border-bottom-right-radius: 1rem;` : `border-bottom-left-radius: 1rem;`"
+              >
+                  hello card
+                  {{ index }}
+                  {{item.message}}
+              </div>
+
+              <!-- <v-img v-show="item.type === 'jpg'"
+                max-height="500"
+                max-width="500"
+                contain
+                :src="require('../assets/bg.jpg')" v-on:click="download">
+              </v-img> -->
+
+          <v-menu offset-y
+          absolute>
+          <template v-slot:activator="{ on, attrs }">
+              <v-img v-show="item.type === 'jpg'"
+                max-height="50vh"
+                max-width="50vw"
+                contain
+                :src="require('../assets/bg.jpg')" v-on:click="download"
+                v-bind="attrs"
+                v-on="on">
+              </v-img>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
             >
-              {{ index }}
-              {{item.message}}
-            </div>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+              <div>
+
+              </div>
 
           </div>
 
@@ -88,16 +116,23 @@ export default {
       inputFile: [],
       height:500,
       // username: "",
-      messages: [],
-    //   username: "周杰伦"
-    //   messages: [{
-    //       message:"hahah",
-    //       time: Date.now(),
-    //       receive: true,  
-    //       username: "hello",
-    //       color: "red",
-    //       type: "text",
-    //   }]
+      // messages: [],
+      // username: "周杰伦",
+      messages: [{
+          message:"hahah",
+          time: Date.now(),
+          receive: true,  
+          username: "hello",
+          color: "red",
+          type: "jpg",
+      }],
+
+      items: [
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' },
+      ],
     };
   },
 
@@ -108,9 +143,9 @@ export default {
   },
 
   computed: {
-    username(){
-      return this.$store.state.username;
-    },
+    // username(){
+    //   return this.$store.state.username;
+    // },
     color() {
       return this.$store.state.color;
     },
@@ -184,6 +219,10 @@ export default {
     toFormatDate(time) {
       var dateFormat = require('dateformat');
       return dateFormat(time, "mm-dd HH:MM");
+    },
+
+    download() {
+      console.log("download");
     }
 
   },
