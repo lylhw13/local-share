@@ -3,11 +3,10 @@
     <div id="main">
       <div id="messages-window" v-bind:style="messageCon">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
-          <div
+          <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
             outlined
-            id="message-row"
             class="primary pa-0 ma-1 d-flex flex-row"
             :class="{'flex-row-reverse': !item.receive}"
           >
@@ -16,17 +15,18 @@
               <span class="white--text headline">{{(item.username[0].toUpperCase())}}</span>
             </v-avatar>
           </div>
-          <div id="message-box" class="ma-0 mb-6 ml-1 mr-1 red d-flex"
+          <div id="message-box" class="ma-0 mb-6 ml-1 mr-1 red d-flex flex-column"
             :class="{'align-end': !item.receive}">
-              <div id="message-title">
-                <span v-bind:color="item.color">{{item.username}}&emsp;</span>
+              <div id="message-title" 
+                  style="background-color: pink;">
+                <span v-bind:color="item.color" class="font-weight-bold">{{item.username}}&emsp;</span>
                 <span class="font-weight-light caption">{{toFormatDate(item.time)}}</span>
               </div>
 
-              <div outline 
+              <div id="text-message" outline 
               v-show="item.type === 'text'"
               class="pa-1 orange"
-              style="max-width: 60%; border-top-left-radius: 1rem; border-top-right-radius: 1rem; "
+              style="max-width: 60vw; border-top-left-radius: 1rem; border-top-right-radius: 1rem; "
               :style=" item.receive ? `border-bottom-right-radius: 1rem;` : `border-bottom-left-radius: 1rem;`"
               >
                   hello card
@@ -34,34 +34,65 @@
                   {{item.message}}
               </div>
 
-              <!-- <v-img v-show="item.type === 'jpg'"
-                max-height="500"
-                max-width="500"
-                contain
-                :src="require('../assets/bg.jpg')" v-on:click="download">
-              </v-img> -->
+              <div id="image-message" v-show="item.type === 'jpg'">
+                  <v-menu offset-y absolute rounded="lg">
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-img 
+                        max-height="50vh"
+                        max-width="30vw"
+                        contain
+                        :src="require('../assets/bg.jpg')" v-on:click="download"
+                        v-bind="attrs"
+                        v-on="on">
+                      </v-img>
+                  </template>
+                  <v-list>
+                    <v-list-item
+                      v-for="(item, index) in items"
+                      :key="index"
+                      dense
+                    >
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </div>
 
-          <v-menu offset-y
-          absolute>
-          <template v-slot:activator="{ on, attrs }">
-              <v-img v-show="item.type === 'jpg'"
-                max-height="50vh"
-                max-width="50vw"
-                contain
-                :src="require('../assets/bg.jpg')" v-on:click="download"
-                v-bind="attrs"
-                v-on="on">
-              </v-img>
-          </template>
-          <v-list>
-            <v-list-item
-              v-for="(item, index) in items"
-              :key="index"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+              <div id="file-message" v-show="item.type === 'file'">
+                  <v-menu offset-y absolute rounded="lg">
+                  <template v-slot:activator="{ on, attrs }">
+                      <div id="file-message" outline 
+                      v-show="item.type === 'file'"
+                      class="pa-1 cyan d-flex"
+                      style="min-width:10vw; min-height:10vh; border-top-left-radius: 1rem; border-top-right-radius: 1rem; "
+                      :style=" item.receive ? `border-bottom-right-radius: 1rem;` : `border-bottom-left-radius: 1rem;`"
+                      v-bind="attrs"
+                      v-on="on"
+                      >
+                        <div class="align-self-center" style="max-width:40vw;">
+                            hello card mdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outline
+                            hello card mdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outline
+                            {{ index }}
+                            {{item.message}}
+                        </div>
+                        <v-icon right>mdi-file-document-multiple-outline</v-icon>
+                      </div>
+                  </template>
+                  <v-list dense>
+                    <!-- <v-list-item-group color="primary"> -->
+                      
+                    <v-list-item
+                      v-for="(item, index) in items"
+                      :key="index"
+                      color="success"
+                    >
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                    <!-- </v-list-item-group> -->
+
+                  </v-list>
+                </v-menu>
+              </div>
 
               <div>
 
@@ -121,10 +152,17 @@ export default {
       messages: [{
           message:"hahah",
           time: Date.now(),
+          receive: false,  
+          username: "hello",
+          color: "red",
+          type: "file",
+      },{
+          message:"hahah",
+          time: Date.now(),
           receive: true,  
           username: "hello",
           color: "red",
-          type: "jpg",
+          type: "file",
       }],
 
       items: [
@@ -260,7 +298,6 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
 
 .v-textarea {
   height: 7rem;
