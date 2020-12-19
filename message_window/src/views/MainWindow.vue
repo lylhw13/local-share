@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
-      <div id="messages-window" v-bind:style="messageCon">
+      <div id="messages-window">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
             v-for="(item, index) in messages"
@@ -52,13 +52,11 @@ var socket = io();
 export default {
   data() {
     return {
-      messageCon: {},
       inputText: "",
       inputFile: [],
       height:500,
       // username: "",
       // messages: [],
-      // username: "周杰伦",
       messages: [{
           data:"hahah",
           time: Date.now(),
