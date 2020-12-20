@@ -40,7 +40,22 @@
 
       <!-- file part -->
       <template v-if="message.type === 'file'">
-        <div id="file-message">
+        <div
+          id="file-message"
+          class="pa-1 orange message-text-content"
+          :style="
+            message.receive
+              ? `border-bottom-right-radius: 1rem;`
+              : `border-bottom-left-radius: 1rem;`
+          "
+          v-on:click="downloadFile"
+        >
+          <div  class="align-self-center text-content">
+          {{ message.data }}
+          </div>
+           <v-icon right>mdi-file-document-multiple-outline</v-icon>
+        </div>
+       <!--  <div id="file-message">
           <v-menu offset-y absolute rounded="lg">
             <template v-slot:activator="{ on, attrs }">
               <div
@@ -73,8 +88,8 @@
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
-          </v-menu>
-        </div>
+          </v-menu> 
+        </div> -->
       </template>
 
       <!-- image part -->
@@ -109,13 +124,15 @@
 
 <script>
 import ImageItem from './ImageItem.vue';
+// const FileSaver = require('file-saver')
+const axios = require("axios");
 
 export default {
     name: 'MessageItem',
     props: ["message"],
     data() {
       return {
-        items:[]
+        // items:[]
       }
     },
 
@@ -124,9 +141,56 @@ export default {
     },
     methods: {
           toFormatDate(time) {
-      var dateFormat = require('dateformat');
-      return dateFormat(time, "mm-dd HH:MM");
-    },
+            var dateFormat = require('dateformat');
+            return dateFormat(time, "mm-dd HH:MM");
+          },
+          downloadFile() {
+            console.log("download file")
+            //path = window.location.href + this.message.path
+            const path = this.message.path
+            console.log(path)
+            // FileSaver.saveAs(path, this.message.data)
+
+            axios.get("/temp/" + "hello.pdf",
+            {
+              // params: {
+              //     name: this.message.filename
+              //   },
+                responseType: 'arraybuffer',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/pdf'
+                }
+            })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data], {type : 'application/gzip'}));
+                const link = document.createElement('a');
+                link.href = url;
+                // link.setAttribute('href', 'data:application/pdf;');
+                // link.setAttribute('download', response.headers["content-disposition"].split("filename=")[1]);
+                link.setAttribute('name', 'file.pdf'); //or any other extension
+                // link.setAttribute('type', 'application/pdf')
+                document.body.appendChild(link);
+                link.click();
+
+            })
+            .catch((error) => console.log(error));
+          }
+
+          // download(filename, text) {
+          // var pom = document.createElement('a');
+          // pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+          // pom.setAttribute('download', filename);
+
+          // if (document.createEvent) {
+          //     var event = document.createEvent('MouseEvents');
+          //     event.initEvent('click', true, true);
+          //     pom.dispatchEvent(event);
+          // }
+          // else {
+          //     pom.click();
+          // }
+// }
     },
 };
 </script>

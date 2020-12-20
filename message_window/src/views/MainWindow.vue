@@ -64,6 +64,7 @@ export default {
           username: "hello",
           color: "red",
           type: "file",
+          path:"",
       },{
           data:"hahah",
           time: Date.now(),
@@ -112,6 +113,7 @@ export default {
     // new message
     socket.on('new message', (msg) => {
       msg.receive = true;
+      console.log(msg)
       this.messages.push(msg);
     }),
 
@@ -131,40 +133,40 @@ export default {
 
   methods: {
     send(){
-      
-      var formData = new FormData();
-      for (let file of this.inputFile) {
-        formData.append("file", file, file.name);
+
+      if (this.inputFile.length > 0) {
+          var formData = new FormData();
+        for (let file of this.inputFile) {
+          formData.append("file", file, file.name);
+        }
+
+        axios.post("/upload_file", formData)
+              .then(response => {
+                console.log("success")
+                console.log(response)
+              })
+              .catch( error => {
+                console.log("error")
+                console.log(error)
+              })
+      }
+      else {      
+        if (!this.inputText) { return }
+        
+        const msg = {
+          data: this.inputText,
+          time: Date.now(),
+          receive: false,
+          username: this.username,
+          color: this.color,
+          type: "text"
+        }
+        // console.log("color is " + msg.color)
+        this.messages.push(msg);
+        socket.emit('new message', msg);
+
       }
 
-      axios.post("/upload_file", formData)
-            .then(response => {
-              console.log("success")
-              console.log(response)
-            })
-            .catch( error => {
-              console.log("error")
-              console.log(error)
-            })
-
-      if (!this.inputFile) {
-        console.log(this.inputFile);
-        return;
-      }
-      if (!this.inputText) { return }
-      
-      const msg = {
-        message: this.inputText,
-        time: Date.now(),
-        receive: false,
-        username: this.username,
-        color: this.color,
-        type: "text"
-      }
-
-      // console.log("color is " + msg.color)
-      this.messages.push(msg);
-      socket.emit('new message', msg);
     },
 
 

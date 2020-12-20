@@ -148,14 +148,54 @@ app.post('/api/login', (req, res) => {
 })
 
 const multer = require("multer")
-var upload = multer({dest: "./temp/"})
+const fileFolder = "./temp/"
+var upload = multer({dest: fileFolder})
 
 app.post('/upload_file', upload.single("file"), (req, res) => {
   console.log("upload_file")
   console.log("file: ")
   console.log(req.file)
 
+  const msg = {
+    data: req.file.originalname,
+    time: Date.now(),
+    receive: false,
+    username: "hello",
+    color: this.color,
+    type: "file",
+    path: req.file.destination,
+    filename: req.file.filename
+  }
+
+  io.sockets.emit("new message", msg)
+
   return res.send("upload_file")
+})
+
+app.get('/temp/:name', (req, res) =>{
+  console.log("download");
+  var options = {
+    root: path.join(__dirname, fileFolder),
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true,
+      'Content-Type': 'application/pdf',
+      // 'Content-Disposition': "attachment; filename=hello.pdf",
+      'Content-Disposition': 'attachment; filename="hello.pdf"'
+    }
+  }
+  // var fileName = req.params.name
+  var fileName = "hello.pdf"
+  res.sendFile(fileName, options, function (err) {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log('Sent:', fileName)
+    }
+  })
+
+  // res.sendFile('./temp/' + req.params.name);
 })
 
 function getLoaclIp() {
