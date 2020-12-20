@@ -79,7 +79,7 @@
 
       <!-- image part -->
       <template v-if="message.type === 'image'">
-        <div id="image-message">
+        <!-- <div id="image-message">
           <v-menu offset-y absolute rounded="lg">
             <template v-slot:activator="{ on, attrs }">
               <v-img
@@ -99,7 +99,8 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </div>
+        </div> -->
+        <image-item></image-item>
       </template>
     </div>
   </div>
@@ -107,13 +108,20 @@
 
 
 <script>
+import ImageItem from './ImageItem.vue';
+
 export default {
     name: 'MessageItem',
     props: ["message"],
+    data() {
+      return {
+        items:[]
+      }
+    },
 
-    data:() => ({
-      //
-    }),
+    components:{
+        ImageItem
+    },
     methods: {
           toFormatDate(time) {
       var dateFormat = require('dateformat');

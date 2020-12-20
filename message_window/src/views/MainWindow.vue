@@ -80,10 +80,7 @@ export default {
           type: "image",
       }],
 
-      items: [
-        { title: 'zoomup' },
-        { title: 'download' },
-      ],
+
     };
   },
   components:{
