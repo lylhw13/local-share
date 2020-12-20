@@ -1,7 +1,6 @@
 <template>
   <div id="image-message">
     <v-img
-      max-height="50vh"
       max-width="50vw"
       contain
       :src="picsrc"
@@ -16,39 +15,39 @@
         </v-row>
       </template>
     </v-img>
-    <v-dialog v-model="dialog" transition="dialog-transition" >
+    <v-dialog v-model="dialog" transition="dialog-transition">
       <v-card v-on:click="dialog = !dialog">
-          <!-- <v-toolbar app flat dense>
-        <v-spacer></v-spacer>
-        <v-btn
-            color="primary"
-            text
-            @click="dialog = !dialog"
-          >
-          Download
-        </v-btn>
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = !dialog"
-          >
-            I accept
-          </v-btn>
-          </v-toolbar> -->
-        <v-img :src="picsrc" contain max-height="100vh">
+        <v-img :src="picsrc" contain
+        >
         </v-img>
-        <v-app-bar
-            flat
-            color="rgba(0, 0, 0, 0)"
-          >
-        </v-app-bar>
+
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <template v-if="!isIOS">
+         <v-btn
+            color="blue-grey"
+            class="ma-0 white--text"
+            fab
+            small
+            >
+        <v-icon dark download>
+            mdi-cloud-download
+        </v-icon>
+        </v-btn>
+          </template>
+
+        <template v-if="isIOS">
+            <a :href="picsrc" download>Download</a>
+        </template>
+
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script>
-// const picsrc = require('../assets/bg.jpg')
 
 export default {
   name: "ImageDialog",
@@ -57,11 +56,46 @@ export default {
     return {
       // picsrc,
       dialog: false,
+      isIOS: false,
       // items: []
     };
   },
   beforeCreate() {
+    // function gcd (a, b) {
+    //     return (b == 0) ? a : gcd (b, a%b);
+    // }
     this.picsrc = require("../assets/bg.jpg");
+
+    // console.log(this.picsrc)
+    // var img = new Image()
+    // img.src = this.picsrc
+    // this.ratio = img.width / img.height
+    // console.log(img.height)
+    // console.log(img.width)
+    // console.log(this.ratio)
+  },
+  mounted() {
+    this.isIOS = this.iOS()
+  },
+  methods: {
+      download() {
+          console.log("download")
+
+            var FileSaver = require('file-saver');
+            FileSaver.saveAs(this.picsrc, "image.jpg");
+      },
+      iOS() {
+        return [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+        ].includes(navigator.platform)
+        // iPad on iOS 13 detection
+        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+        }
   },
 };
 </script>
