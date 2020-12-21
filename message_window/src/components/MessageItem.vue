@@ -59,7 +59,7 @@
       </template>
 
       <!-- image part -->
-      <template v-if="message.type === 'image'">
+      <template v-if="message.type === 'image'" :path="message.path">
         <image-item></image-item>
       </template>
     </div>

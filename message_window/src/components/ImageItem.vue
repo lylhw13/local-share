@@ -64,7 +64,8 @@ export default {
     // function gcd (a, b) {
     //     return (b == 0) ? a : gcd (b, a%b);
     // }
-    this.picsrc = require("../assets/bg.jpg");
+    // this.picsrc = require("../assets/bg.jpg");
+    this.picsrc = require(this.path)
 
     // console.log(this.picsrc)
     // var img = new Image()

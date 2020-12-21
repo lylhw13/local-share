@@ -1,15 +1,20 @@
 <template>
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
+    
+
       <div id="messages-window">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
             >
-          <message-item :message="item">hello</message-item>
+
+          <message-item :message="item"></message-item>
           </div>
         </v-list>
+          <!-- <v-image :src="url('${imageData}')"></v-image> -->
+
       </div>
 
       <div id="input-window" style="background-color:red;" ref="inputWindow">
@@ -31,9 +36,10 @@
           >
           </v-textarea>
 
-          <v-btn v-on:click="send" class="align-self-end mr-5">
+          <v-btn v-on:click="send" class="align-self-end mr-5" v-bind:loading="loading">
             发送
           </v-btn>
+          
 
       </div>
     </div>
@@ -48,6 +54,7 @@ const axios = require("axios");
 const FormData = require('form-data');
 const io = require('socket.io-client');
 var socket = io();
+const imgExts = new Set(['png','jpg', 'svg'])
 
 export default {
   data() {
@@ -55,6 +62,8 @@ export default {
       inputText: "",
       inputFile: [],
       height:500,
+      loading: false,
+      selectImage: null,
       // username: "",
       // messages: [],
       messages: [{
@@ -118,7 +127,7 @@ export default {
   beforeMount() {
       const currentUrl = new URL(window.location.href);
       this.clientUrl = currentUrl.hostname + ':' + currentUrl.port
-      console.log("current url is " + this.clientUrl)
+      // console.log("current url is " + this.clientUrl)
   },
   mounted() {
     // new message
@@ -151,22 +160,57 @@ export default {
 
   methods: {
     send(){
-
+      // only send one file a time
       if (this.inputFile.length > 0) {
-          var formData = new FormData();
-        for (let file of this.inputFile) {
-          formData.append("file", file, file.name);
+        console.log(this.inputFile)
+        console.log(typeof(this.inputFile))
+        const file = this.inputFile[0]
+        this.selectImage = file
+        const ext = file.name.split('.').pop()
+        console.log(file.name)
+        console.log("ext is " + ext)
+        if (imgExts.has(ext.toLowerCase())) {
+          console.log("is image")
+          const reader = new FileReader
+          reader.onload = e => {
+            this.imageData = e.target.result
+          }
+          reader.readAsDataURL(file)
+          //   const msg = {
+          //     type: "image",
+          //   data: file.name,
+          //   time: Date.now(),
+          //   receive: false,
+          //   username: "hello",
+          //   color: this.color,
+          //   info: {
+          //     path: file
+          //   }
+          // }
+          // console.log("color is " + msg.color)
+          // this.messages.push(msg);
+          // socket.emit('new message', msg);
+          console.log('hello')
         }
+        else {
+          var formData = new FormData();
+        // for (let file of this.inputFile) {
+          formData.append("file", file, file.name);
+        // }
+          
+          axios.post("/upload_file", formData)
+                .then(response => {
+                  console.log("success")
+                  console.log(response)
+                  this.loading = false
+                })
+                .catch( error => {
+                  console.log("error")
+                  console.log(error)
+                })
 
-        axios.post("/upload_file", formData)
-              .then(response => {
-                console.log("success")
-                console.log(response)
-              })
-              .catch( error => {
-                console.log("error")
-                console.log(error)
-              })
+          this.loading = true
+        }
       }
       else {      
         if (!this.inputText) { return }
