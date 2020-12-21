@@ -58,27 +58,34 @@ export default {
       // username: "",
       // messages: [],
       messages: [{
+          type: "file",
           data:"hahah",
           time: Date.now(),
           receive: false,  
           username: "hello",
           color: "red",
-          type: "file",
-          path:"",
+          info: {
+            path: "",
+            name: "",
+          }
       },{
+          type: "text",
           data:"hahah",
           time: Date.now(),
           receive: true,  
           username: "hello",
           color: "red",
-          type: "text",
       },{
+          type: "image",
           data:"hahah",
           time: Date.now(),
           receive: false,  
           username: "hello",
           color: "red",
-          type: "image",
+          info: {
+            path: "",
+            name: "",
+          }
       }],
 
 
@@ -86,12 +93,6 @@ export default {
   },
   components:{
     MessageItem
-  },
-
-  beforeCreate() {
-      // if ( !this.$store.state.loginState ) {
-      //     this.$router.push("/");
-      // }
   },
 
   computed: {
@@ -109,10 +110,27 @@ export default {
     }
   },
 
+  beforeCreate() {
+      // if ( !this.$store.state.loginState ) {
+      //     this.$router.push("/");
+      // }
+  },
+  beforeMount() {
+      const currentUrl = new URL(window.location.href);
+      this.clientUrl = currentUrl.hostname + ':' + currentUrl.port
+      console.log("current url is " + this.clientUrl)
+  },
   mounted() {
     // new message
     socket.on('new message', (msg) => {
       msg.receive = true;
+
+      if (msg.type === "file") {
+        if (this.clientUrl === msg.info.url) {
+          msg.receive = false;
+        }
+      }
+      console.log("new message")
       console.log(msg)
       this.messages.push(msg);
     }),

@@ -155,47 +155,61 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
   console.log("upload_file")
   console.log("file: ")
   console.log(req.file)
+  // console.log(req)
 
   const msg = {
+    type: "file",
     data: req.file.originalname,
     time: Date.now(),
     receive: false,
     username: "hello",
     color: this.color,
-    type: "file",
-    path: req.file.destination,
-    filename: req.file.filename
+    info: {
+      path: req.file.destination,
+      name: req.file.filename, 
+      url: req.get('host')
+    }
   }
+
+  console.log(msg.info.url)
 
   io.sockets.emit("new message", msg)
 
   return res.send("upload_file")
 })
 
-app.get('/temp/:name', (req, res) =>{
+var mime = require('mime-types')
+
+app.get('/temp', (req, res) =>{
   console.log("download");
+  console.log(req.query)
+  var filename = req.query.originalName
+  console.log(filename)
+
+  // var fileExt = filename.split('.').pop();
+  var mime_type = mime.lookup(filename.split('.').pop());
+
+  console.log(mime_type)
+
   var options = {
     root: path.join(__dirname, fileFolder),
     dotfiles: 'deny',
     headers: {
       'x-timestamp': Date.now(),
       'x-sent': true,
-      'Content-Type': 'application/pdf',
-      // 'Content-Disposition': "attachment; filename=hello.pdf",
-      'Content-Disposition': 'attachment; filename="hello.pdf"'
+      'Content-Type': mime_type,
+      'Content-Disposition': 'attachment; filename=' + encodeURI(filename)
     }
   }
-  // var fileName = req.params.name
-  var fileName = "hello.pdf"
-  res.sendFile(fileName, options, function (err) {
+
+  res.sendFile(req.query.name, options, function (err) {
     if (err) {
       console.log(err)
     } else {
-      console.log('Sent:', fileName)
+      console.log('Sent:', filename)
     }
   })
 
-  // res.sendFile('./temp/' + req.params.name);
 })
 
 function getLoaclIp() {

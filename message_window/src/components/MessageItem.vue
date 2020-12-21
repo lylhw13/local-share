@@ -22,6 +22,7 @@
         }}</span>
       </div>
 
+      <!-- text part -->
       <template v-if="message.type === 'text'">
         <div
           id="text-message"
@@ -55,66 +56,10 @@
           </div>
            <v-icon right>mdi-file-document-multiple-outline</v-icon>
         </div>
-       <!--  <div id="file-message">
-          <v-menu offset-y absolute rounded="lg">
-            <template v-slot:activator="{ on, attrs }">
-              <div
-                id="file-message"
-                class="pa-1 cyan message-text-content"
-                :style="
-                  message.receive
-                    ? `border-bottom-right-radius: 1rem;`
-                    : `border-bottom-left-radius: 1rem;`
-                "
-                v-bind="attrs"
-                v-on="on"
-              >
-                <div class="align-self-center text-content">
-                  hello card
-                  mdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outline
-                  hello card
-                  mdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outlinemdi-file-document-multiple-outline
-                  {{ message.data }}
-                </div>
-                <v-icon right>mdi-file-document-multiple-outline</v-icon>
-              </div>
-            </template>
-            <v-list dense>
-              <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-                color="success"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu> 
-        </div> -->
       </template>
 
       <!-- image part -->
       <template v-if="message.type === 'image'">
-        <!-- <div id="image-message">
-          <v-menu offset-y absolute rounded="lg">
-            <template v-slot:activator="{ on, attrs }">
-              <v-img
-                max-height="50vh"
-                max-width="30vw"
-                contain
-                :src="require('../assets/bg.jpg')"
-                v-on:click="download"
-                v-bind="attrs"
-                v-on="on"
-              >
-              </v-img>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in items" :key="index" dense>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div> -->
         <image-item></image-item>
       </template>
     </div>
@@ -124,7 +69,6 @@
 
 <script>
 import ImageItem from './ImageItem.vue';
-// const FileSaver = require('file-saver')
 const axios = require("axios");
 
 export default {
@@ -146,51 +90,35 @@ export default {
           },
           downloadFile() {
             console.log("download file")
-            //path = window.location.href + this.message.path
-            const path = this.message.path
-            console.log(path)
-            // FileSaver.saveAs(path, this.message.data)
+            console.log("path " + this.message.info.path)
+            console.log("name " + this.message.info.name)
 
-            axios.get("/temp/" + "hello.pdf",
+            axios.get("/temp",
             {
-              // params: {
-              //     name: this.message.filename
-              //   },
                 responseType: 'arraybuffer',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/pdf'
+                },
+                params: {
+                  name: this.message.info.name,
+                  originalName: this.message.data,
                 }
             })
             .then((response) => {
-                const url = window.URL.createObjectURL(new Blob([response.data], {type : 'application/gzip'}));
+                var mime_type = response.headers['content-type']
+                console.log("browser type is " + mime_type)
+
+                const url = window.URL.createObjectURL(new Blob([response.data], {type : mime_type}));
                 const link = document.createElement('a');
                 link.href = url;
-                // link.setAttribute('href', 'data:application/pdf;');
-                // link.setAttribute('download', response.headers["content-disposition"].split("filename=")[1]);
-                link.setAttribute('name', 'file.pdf'); //or any other extension
-                // link.setAttribute('type', 'application/pdf')
+                link.setAttribute('download', decodeURI(response.headers["content-disposition"].split("filename=")[1]));
                 document.body.appendChild(link);
                 link.click();
 
             })
             .catch((error) => console.log(error));
           }
-
-          // download(filename, text) {
-          // var pom = document.createElement('a');
-          // pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-          // pom.setAttribute('download', filename);
-
-          // if (document.createEvent) {
-          //     var event = document.createEvent('MouseEvents');
-          //     event.initEvent('click', true, true);
-          //     pom.dispatchEvent(event);
-          // }
-          // else {
-          //     pom.click();
-          // }
-// }
     },
 };
 </script>
