@@ -101,10 +101,6 @@ export default {
                     'Content-Type': 'application/json',
                     'Accept': 'application/pdf'
                 },
-                // params: {
-                //   name: this.message.info.name,
-                //   originalName: this.message.data,
-                // }
             })
             .then((response) => {
                 // var mime_type = response.headers['content-type']

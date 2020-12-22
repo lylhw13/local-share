@@ -38,10 +38,6 @@
         </v-btn>
           </template>
 
-        <!-- <template v-if="isIOS">
-            <a :href="path" download>Download</a>
-        </template> -->
-
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -55,16 +51,12 @@ export default {
   props: ["path"],
   data() {
     return {
-      // picsrc,
       dialog: false,
       isIOS: false,
-      // items: []
     };
   },
   beforeCreate() {
-    // function gcd (a, b) {
-    //     return (b == 0) ? a : gcd (b, a%b);
-    // }
+
     // this.picsrc = require("../assets/bg.jpg");
     // this.picsrc = this.path
 

@@ -1,7 +1,6 @@
 <template>
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
-    <!-- <v-img :src="imgUrl"></v-img> -->
       <div id="messages-window">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
@@ -46,7 +45,6 @@
 import MessageItem from '../components/MessageItem.vue';
 
 const axios = require("axios");
-// const multer = requirs("multer");
 const FormData = require('form-data');
 const io = require('socket.io-client');
 var socket = io();
@@ -59,7 +57,6 @@ export default {
       inputFile: [],
       height:500,
       loading: false,
-      imgUrl: null,
       // username: "",
       // messages: [],
       messages: [{
@@ -80,18 +77,6 @@ export default {
           receive: true,  
           username: "hello",
           color: "red",
-      },{
-          type: "text",
-          data:"hahah",
-          time: Date.now(),
-          receive: false,  
-          username: "hello",
-          color: "red",
-          path:"",
-          info: {
-            path: "",
-            name: "",
-          }
       }],
 
 
@@ -121,24 +106,18 @@ export default {
       //     this.$router.push("/");
       // }
   },
-  beforeMount() {
-      const currentUrl = new URL(window.location.href);
-      this.clientUrl = currentUrl.hostname + ':' + currentUrl.port
-      // console.log("current url is " + this.clientUrl)
-  },
+  // beforeMount() {
+  //     const currentUrl = new URL(window.location.href);
+  //     this.clientUrl = currentUrl.hostname + ':' + currentUrl.port
+  //     // console.log("current url is " + this.clientUrl)
+  // },
   mounted() {
     // new message
     socket.on('new message', (msg) => {
-      // msg.receive = true;
-
-      // if (msg.type === "file") {
-      //   if (this.clientUrl === msg.info.url) {
-      //     msg.receive = false;
-      //   }
-      // }
       console.log("new message")
       console.log(msg)
       this.messages.push(msg);
+      // this.scrollUp()
     }),
 
     // cancel all login state
@@ -149,6 +128,13 @@ export default {
 
     this.height =document.getElementById("input-window").offsetHeight
   },
+  // watch: {
+  //   messages:function(){
+  //     console.log("watch")
+  //     var container = this.$el.querySelector('#scrollable');
+  //       container.scrollTop = container.scrollHeight;
+  //   }
+  // },
 
   updated() {
         var container = this.$el.querySelector('#scrollable');
@@ -156,6 +142,11 @@ export default {
   },
 
   methods: {
+    scrollUp() {
+      console.log("scroll")
+        var container = this.$el.querySelector('#scrollable');
+        container.scrollTop = container.scrollHeight;
+    },
     send(){
       // only send one file a time
       if (this.inputFile.length > 0) {
@@ -174,19 +165,21 @@ export default {
               path: URL.createObjectURL(file),
         }
         this.messages.push(msg);
+        // this.scrollUp()
 
         formData.append("file", file, file.name);
 
           axios.post("/upload_file", formData)
             .then(response => {
               console.log("upload success, response is")
-              console.log(response)
+              // console.log(response)
               let t_msg = { ...msg }  //deep copy
               t_msg.receive = true
               t_msg.path = response.data.path
               socket.emit('new message', t_msg);
-              console.log(t_msg)
+              // console.log(t_msg)
               this.loading = false
+              this.inputFile = []
             })
             .catch(error => {
               console.log("upload error")
@@ -194,66 +187,6 @@ export default {
             })
 
             this.loading = true
-
-        // if (imgExts.has(ext.toLowerCase())) {
-        //   console.log("is image")
-        //   this.imgUrl = URL.createObjectURL(file)
-        //   console.log(this.imgUrl)
-        //     const msg = {
-        //       type: "image",
-        //       data: file.name,
-        //       time: Date.now(),
-        //       receive: false,
-        //       username: "hello",
-        //       color: "red",
-        //       path: this.imgUrl,
-        //       info: {
-        //         path: this.imgUrl
-        //       }
-        //   }
-        //   this.messages.push(msg);
-
-        //   formData.append("file", file, file.name);
-
-        //   axios.post("upload_file", formData)
-        //     .then(response => {
-        //       console.log("upload success, response is")
-        //       console.log(response)
-        //       let t_msg = {
-        //         ...msg
-        //       }
-        //       t_msg.receive = true
-        //       t_msg.path = response.data.path
-        //       socket.emit('new message', t_msg);
-        //       loading = false
-        //       console.log(t_msg)
-        //     })
-        //     .catch(error => {
-        //       console.log("upload error")
-        //       console.log(error)
-        //     })
-
-        //     loading = true
-        // }
-        // else {
-        //   // var formData = new FormData();
-        // // for (let file of this.inputFile) {
-        //   formData.append("file", file, file.name);
-        // // }
-          
-        //   axios.post("/upload_file", formData)
-        //         .then(response => {
-        //           console.log("success")
-        //           console.log(response)
-        //           this.loading = false
-        //         })
-        //         .catch( error => {
-        //           console.log("error")
-        //           console.log(error)
-        //         })
-
-        //   this.loading = true
-        // }
       }
       else {      
         if (!this.inputText) { return }
@@ -262,13 +195,16 @@ export default {
           data: this.inputText,
           time: Date.now(),
           receive: false,
-          username: this.username,
+          username: "hello",
           color: this.color,
           type: "text"
         }
-        // console.log("color is " + msg.color)
         this.messages.push(msg);
-        socket.emit('new message', msg);
+
+        var t_msg = {...msg}
+        t_msg.receive = true
+        socket.emit('new message', t_msg);
+        this.inputText = ""
       }
 
     },
