@@ -24,12 +24,13 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <template v-if="!isIOS">
+          <template>
          <v-btn
             color="blue-grey"
             class="ma-0 white--text"
             fab
             small
+            v-on:click="$emit('download-file')"
             >
         <v-icon dark download>
             mdi-cloud-download
@@ -37,9 +38,9 @@
         </v-btn>
           </template>
 
-        <template v-if="isIOS">
+        <!-- <template v-if="isIOS">
             <a :href="path" download>Download</a>
-        </template>
+        </template> -->
 
         </v-card-actions>
       </v-card>
@@ -79,12 +80,12 @@ export default {
     this.isIOS = this.iOS()
   },
   methods: {
-      download() {
-          console.log("download")
+    //   download() {
+    //       console.log("download")
 
-            var FileSaver = require('file-saver');
-            FileSaver.saveAs(this.path, "image.jpg");
-      },
+    //         var FileSaver = require('file-saver');
+    //         FileSaver.saveAs(this.path, "image.jpg");
+    //   },
       iOS() {
         return [
             'iPad Simulator',

@@ -60,7 +60,7 @@
 
       <!-- image part -->
       <template v-if="message.type === 'image'" >
-        <image-item :path="message.path"></image-item>
+        <image-item :path="message.path" v-on:download-file="downloadFile"></image-item>
       </template>
     </div>
   </div>
@@ -70,6 +70,7 @@
 <script>
 import ImageItem from './ImageItem.vue';
 const axios = require("axios");
+var mime = require('mime-types')
 
 export default {
     name: 'MessageItem',
@@ -90,29 +91,31 @@ export default {
           },
           downloadFile() {
             console.log("download file")
-            console.log("path " + this.message.info.path)
-            console.log("name " + this.message.info.name)
+            // console.log("path " + this.message.info.path)
+            // console.log("name " + this.message.info.name)
 
-            axios.get("/temp",
+            axios.get(this.message.path,
             {
                 responseType: 'arraybuffer',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/pdf'
                 },
-                params: {
-                  name: this.message.info.name,
-                  originalName: this.message.data,
-                }
+                // params: {
+                //   name: this.message.info.name,
+                //   originalName: this.message.data,
+                // }
             })
             .then((response) => {
-                var mime_type = response.headers['content-type']
+                // var mime_type = response.headers['content-type']
+                var mime_type = mime.lookup(this.message.data.split('.').pop())
                 console.log("browser type is " + mime_type)
 
                 const url = window.URL.createObjectURL(new Blob([response.data], {type : mime_type}));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', decodeURI(response.headers["content-disposition"].split("filename=")[1]));
+                // link.setAttribute('download', decodeURI(response.headers["content-disposition"].split("filename=")[1]));
+                link.setAttribute('download', this.message.data);
                 document.body.appendChild(link);
                 link.click();
 

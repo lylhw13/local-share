@@ -195,7 +195,8 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
   }
   console.log(hostname)
   return res.status(200).send({
-    path: protocol + hostname + ":10001/temp/" + req.file.filename
+    // path: protocol + hostname + ":10001/temp/" + req.file.filename
+    path: "/temp/" + req.file.filename
     // name: req.file.filename
   })
 })

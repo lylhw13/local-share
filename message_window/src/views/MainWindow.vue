@@ -129,13 +129,13 @@ export default {
   mounted() {
     // new message
     socket.on('new message', (msg) => {
-      msg.receive = true;
+      // msg.receive = true;
 
-      if (msg.type === "file") {
-        if (this.clientUrl === msg.info.url) {
-          msg.receive = false;
-        }
-      }
+      // if (msg.type === "file") {
+      //   if (this.clientUrl === msg.info.url) {
+      //     msg.receive = false;
+      //   }
+      // }
       console.log("new message")
       console.log(msg)
       this.messages.push(msg);
@@ -159,69 +159,101 @@ export default {
     send(){
       // only send one file a time
       if (this.inputFile.length > 0) {
-        // console.log(this.inputFile)
-        // console.log(typeof(this.inputFile))
         const file = this.inputFile[0]
         var formData = new FormData();
 
         const ext = file.name.split('.').pop()
-        if (imgExts.has(ext.toLowerCase())) {
-          console.log("is image")
-          this.imgUrl = URL.createObjectURL(file)
-          console.log(this.imgUrl)
-            const msg = {
-              type: "image",
+
+        const msg = {
+              type: imgExts.has(ext.toLowerCase()) ? "image" : "file",
               data: file.name,
               time: Date.now(),
               receive: false,
               username: "hello",
               color: "red",
-              path: this.imgUrl,
-              info: {
-                path: this.imgUrl
-              }
-          }
-          this.messages.push(msg);
+              path: URL.createObjectURL(file),
+        }
+        this.messages.push(msg);
 
-          formData.append("file", file, file.name);
+        formData.append("file", file, file.name);
 
-          axios.post("upload_file", formData)
+          axios.post("/upload_file", formData)
             .then(response => {
               console.log("upload success, response is")
               console.log(response)
-              let t_msg = {
-                ...msg
-              }
+              let t_msg = { ...msg }  //deep copy
               t_msg.receive = true
               t_msg.path = response.data.path
-              // t_msg.info.path = "blob:"+response.data.path
               socket.emit('new message', t_msg);
               console.log(t_msg)
+              this.loading = false
             })
             .catch(error => {
               console.log("upload error")
               console.log(error)
             })
-        }
-        else {
-          // var formData = new FormData();
-        // for (let file of this.inputFile) {
-          formData.append("file", file, file.name);
-        // }
-          
-          axios.post("/upload_file", formData)
-                .then(response => {
-                  console.log("success")
-                  console.log(response)
-                  this.loading = false
-                })
-                .catch( error => {
-                  console.log("error")
-                  console.log(error)
-                })
 
-          this.loading = true
-        }
+            this.loading = true
+
+        // if (imgExts.has(ext.toLowerCase())) {
+        //   console.log("is image")
+        //   this.imgUrl = URL.createObjectURL(file)
+        //   console.log(this.imgUrl)
+        //     const msg = {
+        //       type: "image",
+        //       data: file.name,
+        //       time: Date.now(),
+        //       receive: false,
+        //       username: "hello",
+        //       color: "red",
+        //       path: this.imgUrl,
+        //       info: {
+        //         path: this.imgUrl
+        //       }
+        //   }
+        //   this.messages.push(msg);
+
+        //   formData.append("file", file, file.name);
+
+        //   axios.post("upload_file", formData)
+        //     .then(response => {
+        //       console.log("upload success, response is")
+        //       console.log(response)
+        //       let t_msg = {
+        //         ...msg
+        //       }
+        //       t_msg.receive = true
+        //       t_msg.path = response.data.path
+        //       socket.emit('new message', t_msg);
+        //       loading = false
+        //       console.log(t_msg)
+        //     })
+        //     .catch(error => {
+        //       console.log("upload error")
+        //       console.log(error)
+        //     })
+
+        //     loading = true
+        // }
+        // else {
+        //   // var formData = new FormData();
+        // // for (let file of this.inputFile) {
+        //   formData.append("file", file, file.name);
+        // // }
+          
+        //   axios.post("/upload_file", formData)
+        //         .then(response => {
+        //           console.log("success")
+        //           console.log(response)
+        //           this.loading = false
+        //         })
+        //         .catch( error => {
+        //           console.log("error")
+        //           console.log(error)
+        //         })
+
+        //   this.loading = true
+        // }
       }
       else {      
         if (!this.inputText) { return }
@@ -237,12 +269,9 @@ export default {
         // console.log("color is " + msg.color)
         this.messages.push(msg);
         socket.emit('new message', msg);
-
       }
 
     },
-
-
 
     download() {
       console.log("download");
