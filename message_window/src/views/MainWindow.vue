@@ -2,7 +2,6 @@
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
     
-
       <div id="messages-window">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
@@ -13,7 +12,7 @@
           <message-item :message="item"></message-item>
           </div>
         </v-list>
-          <!-- <v-image :src="url('${imageData}')"></v-image> -->
+          
 
       </div>
 
@@ -63,7 +62,7 @@ export default {
       inputFile: [],
       height:500,
       loading: false,
-      selectImage: null,
+      imgUrl: null,
       // username: "",
       // messages: [],
       messages: [{
@@ -165,31 +164,26 @@ export default {
         console.log(this.inputFile)
         console.log(typeof(this.inputFile))
         const file = this.inputFile[0]
-        this.selectImage = file
         const ext = file.name.split('.').pop()
         console.log(file.name)
         console.log("ext is " + ext)
         if (imgExts.has(ext.toLowerCase())) {
           console.log("is image")
-          const reader = new FileReader
-          reader.onload = e => {
-            this.imageData = e.target.result
+          this.imgUrl = URL.createObjectURL(file)
+            const msg = {
+              type: "image",
+              data: file.name,
+              time: Date.now(),
+              receive: false,
+              username: "hello",
+              color: "red",
+              info: {
+                path: this.imgUrl
+              }
           }
-          reader.readAsDataURL(file)
-          //   const msg = {
-          //     type: "image",
-          //   data: file.name,
-          //   time: Date.now(),
-          //   receive: false,
-          //   username: "hello",
-          //   color: this.color,
-          //   info: {
-          //     path: file
-          //   }
-          // }
           // console.log("color is " + msg.color)
-          // this.messages.push(msg);
-          // socket.emit('new message', msg);
+          this.messages.push(msg);
+          socket.emit('new message', msg);
           console.log('hello')
         }
         else {

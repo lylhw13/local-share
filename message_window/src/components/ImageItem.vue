@@ -3,7 +3,7 @@
     <v-img
       max-width="50vw"
       contain
-      :src="picsrc"
+      :src="path"
       v-on:click="dialog = !dialog"
     >
       <template v-slot:placeholder>
@@ -17,7 +17,7 @@
     </v-img>
     <v-dialog v-model="dialog" transition="dialog-transition">
       <v-card v-on:click="dialog = !dialog">
-        <v-img :src="picsrc" contain
+        <v-img :src="path" contain
         >
         </v-img>
 
@@ -38,7 +38,7 @@
           </template>
 
         <template v-if="isIOS">
-            <a :href="picsrc" download>Download</a>
+            <a :href="path" download>Download</a>
         </template>
 
         </v-card-actions>
@@ -65,7 +65,7 @@ export default {
     //     return (b == 0) ? a : gcd (b, a%b);
     // }
     // this.picsrc = require("../assets/bg.jpg");
-    this.picsrc = require(this.path)
+    // this.picsrc = this.path
 
     // console.log(this.picsrc)
     // var img = new Image()
@@ -83,7 +83,7 @@ export default {
           console.log("download")
 
             var FileSaver = require('file-saver');
-            FileSaver.saveAs(this.picsrc, "image.jpg");
+            FileSaver.saveAs(this.path, "image.jpg");
       },
       iOS() {
         return [
