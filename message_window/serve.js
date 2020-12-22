@@ -157,6 +157,17 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
   console.log(req.file)
   // console.log(req)
 
+  // {
+  //   fieldname: 'file',
+  //   originalname: 'Operating Systems Design Implementation 3.pdf',
+  //   encoding: '7bit',
+  //   mimetype: 'application/pdf',
+  //   destination: './temp/',
+  //   filename: '9a21331fe285a9252efdbc5fdf4eea67',
+  //   path: 'temp/9a21331fe285a9252efdbc5fdf4eea67',
+  //   size: 35870253
+  // }
+
   const msg = {
     type: "file",
     data: req.file.originalname,
@@ -171,14 +182,48 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
     }
   }
 
-  console.log(msg.info.url)
+  // console.log(msg.info.url)
 
-  io.sockets.emit("new message", msg)
+  // io.sockets.emit("new message", msg)
 
-  return res.send("upload_file")
+  // return res.send("upload_file")
+  const protocol = "http://"
+  var hostname = "127.0.0.1"
+  console.log(req.hostname)
+  if (req.hostname === "127.0.0.1") { 
+    hostname = getLoaclIp();
+  }
+  console.log(hostname)
+  return res.status(200).send({
+    path: protocol + hostname + ":10001/temp/" + req.file.filename
+    // name: req.file.filename
+  })
 })
 
 var mime = require('mime-types')
+
+app.get('/temp/:name', (req,res) => {
+  console.log("download image")
+  var filename = req.params.name
+  var options = {
+    root: path.join(__dirname, fileFolder),
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true,
+      // 'Content-Type': mime_type,
+      // 'Content-Disposition': 'attachment; filename=' + encodeURI(filename)
+    }
+  }
+
+  res.sendFile(filename, options, function (err) {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log('Sent:', filename)
+    }
+  })
+})
 
 app.get('/temp', (req, res) =>{
   console.log("download");

@@ -1,19 +1,16 @@
 <template>
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
-    
+    <!-- <v-img :src="imgUrl"></v-img> -->
       <div id="messages-window">
         <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
             >
-
           <message-item :message="item"></message-item>
           </div>
         </v-list>
-          
-
       </div>
 
       <div id="input-window" style="background-color:red;" ref="inputWindow">
@@ -84,12 +81,13 @@ export default {
           username: "hello",
           color: "red",
       },{
-          type: "image",
+          type: "text",
           data:"hahah",
           time: Date.now(),
           receive: false,  
           username: "hello",
           color: "red",
+          path:"",
           info: {
             path: "",
             name: "",
@@ -161,15 +159,16 @@ export default {
     send(){
       // only send one file a time
       if (this.inputFile.length > 0) {
-        console.log(this.inputFile)
-        console.log(typeof(this.inputFile))
+        // console.log(this.inputFile)
+        // console.log(typeof(this.inputFile))
         const file = this.inputFile[0]
+        var formData = new FormData();
+
         const ext = file.name.split('.').pop()
-        console.log(file.name)
-        console.log("ext is " + ext)
         if (imgExts.has(ext.toLowerCase())) {
           console.log("is image")
           this.imgUrl = URL.createObjectURL(file)
+          console.log(this.imgUrl)
             const msg = {
               type: "image",
               data: file.name,
@@ -177,17 +176,35 @@ export default {
               receive: false,
               username: "hello",
               color: "red",
+              path: this.imgUrl,
               info: {
                 path: this.imgUrl
               }
           }
-          // console.log("color is " + msg.color)
           this.messages.push(msg);
-          socket.emit('new message', msg);
-          console.log('hello')
+
+          formData.append("file", file, file.name);
+
+          axios.post("upload_file", formData)
+            .then(response => {
+              console.log("upload success, response is")
+              console.log(response)
+              let t_msg = {
+                ...msg
+              }
+              t_msg.receive = true
+              t_msg.path = response.data.path
+              // t_msg.info.path = "blob:"+response.data.path
+              socket.emit('new message', t_msg);
+              console.log(t_msg)
+            })
+            .catch(error => {
+              console.log("upload error")
+              console.log(error)
+            })
         }
         else {
-          var formData = new FormData();
+          // var formData = new FormData();
         // for (let file of this.inputFile) {
           formData.append("file", file, file.name);
         // }
