@@ -25,14 +25,14 @@
             v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
             no-resize
             outlined
+            hide-details
             placeholder="Input your message..."
             v-model="inputText"
             v-bind:disabled="inputFile.length > 0"
-            
           >
           </v-textarea>
 
-          <v-btn v-on:click="send" class="align-self-end mr-5" v-bind:loading="loading">
+          <v-btn v-on:click="send" class="align-self-end ma-1 mr-5" v-bind:loading="loading">
             发送
           </v-btn>
           

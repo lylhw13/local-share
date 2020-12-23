@@ -23,10 +23,16 @@ const routes = [
     path: '/',
     name: "Login",
     component: () => import("../views/Login.vue")
+  },
+  {
+    path: '*',
+    component: () => import('../views/PageNotFound.vue'),
+    meta: {hideNavigation: true}
   }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 
