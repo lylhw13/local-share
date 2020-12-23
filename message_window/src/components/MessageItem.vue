@@ -60,7 +60,7 @@
 
       <!-- image part -->
       <template v-if="message.type === 'image'" >
-        <image-item :path="message.path" v-on:download-file="downloadFile"></image-item>
+        <image-item :path="message.path" v-on:download-file="downloadFile" v-on:loaded="$emit('loaded')"></image-item>
       </template>
     </div>
   </div>
@@ -85,6 +85,9 @@ export default {
         ImageItem
     },
     methods: {
+      // loaded(){
+      //   console.log("load finish")
+      // },
           toFormatDate(time) {
             var dateFormat = require('dateformat');
             return dateFormat(time, "mm-dd HH:MM");

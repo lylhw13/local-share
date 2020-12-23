@@ -2,12 +2,12 @@
   <v-container fill-height class="grey lighten-3" flex>
     <div id="main">
       <div id="messages-window">
-        <v-list color="purple lighten-3" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
+        <v-list color="purple lighten-3 pr-2" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
           <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
             >
-          <message-item :message="item"></message-item>
+          <message-item :message="item" v-on:loaded="loaded"></message-item>
           </div>
         </v-list>
       </div>
@@ -22,12 +22,13 @@
           <v-textarea id="input"
           background-color="primary"
             color="red"
-            rows="3"
+            v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
             no-resize
             outlined
             placeholder="Input your message..."
             v-model="inputText"
             v-bind:disabled="inputFile.length > 0"
+            
           >
           </v-textarea>
 
@@ -48,7 +49,7 @@ const axios = require("axios");
 const FormData = require('form-data');
 const io = require('socket.io-client');
 var socket = io();
-const imgExts = new Set(['png','jpg', 'svg'])
+const imgExts = new Set(['png','jpg','jpeg','jfif','gif','bmp', 'svg','tiff', 'tif'])
 
 export default {
   data() {
@@ -142,6 +143,10 @@ export default {
   },
 
   methods: {
+      loaded(){
+        console.log("load finish")
+        this.scrollUp()
+      },
     scrollUp() {
       console.log("scroll")
         var container = this.$el.querySelector('#scrollable');
@@ -219,6 +224,7 @@ export default {
 
 <style scoped>
 #scrollable {
+  overflow-x:hidden;
   overflow-y: auto;
   /* height: calc(100vh - 22rem); */
 }
@@ -245,7 +251,7 @@ export default {
   flex-direction: column;
 }
 
-.v-textarea {
+/* .v-textarea {
   height: 7rem;
-} 
+}  */
 </style>

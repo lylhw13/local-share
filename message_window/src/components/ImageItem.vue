@@ -5,6 +5,7 @@
       contain
       :src="path"
       v-on:click="dialog = !dialog"
+      v-on:load="$emit('loaded')"
     >
       <template v-slot:placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
@@ -15,6 +16,7 @@
         </v-row>
       </template>
     </v-img>
+
     <v-dialog v-model="dialog" transition="dialog-transition">
       <v-card v-on:click="dialog = !dialog">
         <v-img :src="path" contain
@@ -78,6 +80,9 @@ export default {
     //         var FileSaver = require('file-saver');
     //         FileSaver.saveAs(this.path, "image.jpg");
     //   },
+      // loaded(){
+      //   console.log("load finish")
+      // },
       iOS() {
         return [
             'iPad Simulator',
