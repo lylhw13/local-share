@@ -1,7 +1,7 @@
 <template>
   <div id="message-box"  class="primary pa-0 ma-1 d-flex flex-row" :class="{'flex-row-reverse': !message.receive}">
     <div id="avatar" style="background-color: white" class="d-flex align-end">
-      <v-avatar v-bind:color="message.color">
+      <v-avatar v-bind:color="message.color" small>
         <span class="white--text headline">{{
           message.username[0].toUpperCase()
         }}</span>
@@ -23,17 +23,17 @@
       </div>
 
       <!-- text part -->
-      <template v-if="message.type === 'text'">
+      <template v-if="message.type === 'text'">    
         <div
           id="text-message"
           class="pa-1 orange message-text-content"
           :style="
             message.receive
-              ? `border-bottom-right-radius: 1rem;`
-              : `border-bottom-left-radius: 1rem;`
+              ? `border-bottom-right-radius: 0.5rem;`
+              : `border-bottom-left-radius: 0.5rem;`
           "
         >
-          <div  class="align-self-center text-content">
+          <div class="text-content">
           {{ message.data }}
           </div>
         </div>
@@ -46,15 +46,15 @@
           class="pa-1 orange message-text-content"
           :style="
             message.receive
-              ? `border-bottom-right-radius: 1rem;`
-              : `border-bottom-left-radius: 1rem;`
+              ? `border-bottom-right-radius: 0.5rem;`
+              : `border-bottom-left-radius: 0.5rem;`
           "
           v-on:click="downloadFile"
         >
+        <!-- <v-icon large>mdi-file-document-multiple-outline</v-icon> -->
           <div  class="align-self-center text-content">
           {{ message.data }}
           </div>
-           <v-icon right>mdi-file-document-multiple-outline</v-icon>
         </div>
       </template>
 
@@ -94,8 +94,6 @@ export default {
           },
           downloadFile() {
             console.log("download file")
-            // console.log("path " + this.message.info.path)
-            // console.log("name " + this.message.info.name)
 
             axios.get(this.message.path,
             {
@@ -134,15 +132,17 @@ export default {
 }
 
 .message-text-content {
-    min-width: 10vw;
-    min-height: 10vh;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem; 
+    /* min-width: 10vw; */
+    /* min-height: 10vh; */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem; 
     display: flex;
+    max-width: 40vw;
 }
 
 .text-content {
-    max-width: 40vw;
+    padding: 0.25rem;
+    overflow-wrap: break-word;
 }
 
 #message-part {
