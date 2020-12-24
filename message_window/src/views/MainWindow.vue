@@ -69,10 +69,10 @@ export default {
       // messages: [],
       messages: [{
           type: "file",
-          data:"hahah",
+          data:"渣渣的苹果",
           time: Date.now(),
           receive: false,  
-          username: "hello",
+          username: "李",
           color: "red",
           info: {
             path: "",
@@ -80,14 +80,12 @@ export default {
           }
       },{
           type: "text",
-          data:"hahah",
+          data:"哈哈哈，你怎么这么渣",
           time: Date.now(),
           receive: true,  
-          username: "hello",
-          color: "red",
+          username: "兵",
+          color: "blue",
       }],
-
-
     };
   },
   components:{
@@ -120,6 +118,7 @@ export default {
   //     // console.log("current url is " + this.clientUrl)
   // },
   mounted() {
+    console.log("mainwindow mounted")
     // new message
     socket.on('new message', (msg) => {
       console.log("new message")
@@ -172,19 +171,17 @@ export default {
               data: file.name,
               time: Date.now(),
               receive: false,
-              username: "hello",
-              color: "red",
+              username: this.$store.state.username,
+              color: this.$store.state.color,
               path: URL.createObjectURL(file),
         }
         this.messages.push(msg);
-        // this.scrollUp()
 
         formData.append("file", file, file.name);
 
-          axios.post("/upload_file", formData)
+          axios.post("/api/upload_file", formData)
             .then(response => {
               console.log("upload success, response is")
-              // console.log(response)
               let t_msg = { ...msg }  //deep copy
               t_msg.receive = true
               t_msg.path = response.data.path
@@ -206,14 +203,14 @@ export default {
         if (!this.inputText) { return }
         
         const msg = {
+          type: "text",
           data: this.inputText,
           time: Date.now(),
           receive: false,
-          username: "hello",
-          color: "pink",
-          type: "text"
+          username: this.$store.state.username,
+          color: this.$store.state.color,
         }
-        this.messages.push(msg);
+        this.messages.push(msg)
 
         var t_msg = {...msg}
         t_msg.receive = true

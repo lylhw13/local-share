@@ -4,8 +4,12 @@ const app = express();
 const path = require('path');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+
 // const port = process.env.PORT || 10001;
 const port = 10001;
+
+// import {getLocalIp} from "./util/local_ip.mjs"
+const {getLocalIp} = require("./util/local_ip");
 
 server.listen(port, () => {
   console.log('Server listening at port %d', port);
@@ -14,8 +18,6 @@ server.listen(port, () => {
 // Routing
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
-
-// Chatroom
 
 let numUsers = 0;
 
@@ -26,12 +28,6 @@ io.on('connection', (socket) => {
   socket.on('new message', (data) => {
 
     console.log(socket.request.connection.remoteAddress);
-    // we tell the client to execute 'new message'
-    // socket.broadcast.emit('new message', {
-    //   username: socket.username,
-    //   // address: socket.address,
-    //   message: data
-    // });
     socket.broadcast.emit('new message', data);
   });
 
@@ -89,11 +85,11 @@ io.on('connection', (socket) => {
 app.use(express.json())
 var g_password = ""
 var g_username = ""
-let userinfos = new Map();  // nickname host
+let userinfos = new Map();  // username host
 
 // setting password
 app.post('/api/setting', (req, res) => {
-  console.log(req.body);
+  console.log("setting");
 
   if (req.hostname !== "127.0.0.1") { 
     return res.status(401).send({
@@ -108,7 +104,7 @@ app.post('/api/setting', (req, res) => {
   console.log("g_password is " + g_password)
 
   return res.status(200).send({
-    serverIp: getLoaclIp()
+    serverIp: getLocalIp()
   })
   //make all already login state false
 })
@@ -120,7 +116,7 @@ app.post('/api/login', (req, res) => {
   const data = req.body
   const c_username = data.username
   const c_url = req.get('host')
-  console.log(c_url)
+  // console.log(c_url)
 
 
   if (data.password !== g_password) {
@@ -151,7 +147,7 @@ const multer = require("multer")
 const fileFolder = "./temp/"
 var upload = multer({dest: fileFolder})
 
-app.post('/upload_file', upload.single("file"), (req, res) => {
+app.post('/api/upload_file', upload.single("file"), (req, res) => {
   console.log("upload_file")
   console.log("file: ")
   console.log(req.file)
@@ -168,32 +164,8 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
   //   size: 35870253
   // }
 
-  const msg = {
-    type: "file",
-    data: req.file.originalname,
-    time: Date.now(),
-    receive: false,
-    username: "hello",
-    color: this.color,
-    info: {
-      path: req.file.destination,
-      name: req.file.filename, 
-      url: req.get('host')
-    }
-  }
-
-  // console.log(msg.info.url)
-
   // io.sockets.emit("new message", msg)
 
-  // return res.send("upload_file")
-  const protocol = "http://"
-  var hostname = "127.0.0.1"
-  console.log(req.hostname)
-  if (req.hostname === "127.0.0.1") { 
-    hostname = getLoaclIp();
-  }
-  console.log(hostname)
   return res.status(200).send({
     // path: protocol + hostname + ":10001/temp/" + req.file.filename
     path: "/temp/" + req.file.filename
@@ -204,7 +176,7 @@ app.post('/upload_file', upload.single("file"), (req, res) => {
 var mime = require('mime-types')
 
 app.get('/temp/:name', (req,res) => {
-  console.log("download image")
+  console.log("download")
   var filename = req.params.name
   var options = {
     root: path.join(__dirname, fileFolder),
@@ -226,37 +198,36 @@ app.get('/temp/:name', (req,res) => {
   })
 })
 
-app.get('/temp', (req, res) =>{
-  console.log("download");
-  console.log(req.query)
-  var filename = req.query.originalName
-  console.log(filename)
+// app.get('/temp', (req, res) =>{
+//   console.log("download");
+//   console.log(req.query)
+//   var filename = req.query.originalName
+//   console.log(filename)
 
-  // var fileExt = filename.split('.').pop();
-  var mime_type = mime.lookup(filename.split('.').pop());
+//   // var fileExt = filename.split('.').pop();
+//   var mime_type = mime.lookup(filename.split('.').pop());
 
-  console.log(mime_type)
+//   console.log(mime_type)
 
-  var options = {
-    root: path.join(__dirname, fileFolder),
-    dotfiles: 'deny',
-    headers: {
-      'x-timestamp': Date.now(),
-      'x-sent': true,
-      'Content-Type': mime_type,
-      'Content-Disposition': 'attachment; filename=' + encodeURI(filename)
-    }
-  }
+//   var options = {
+//     root: path.join(__dirname, fileFolder),
+//     dotfiles: 'deny',
+//     headers: {
+//       'x-timestamp': Date.now(),
+//       'x-sent': true,
+//       'Content-Type': mime_type,
+//       'Content-Disposition': 'attachment; filename=' + encodeURI(filename)
+//     }
+//   }
 
-  res.sendFile(req.query.name, options, function (err) {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log('Sent:', filename)
-    }
-  })
-
-})
+//   res.sendFile(req.query.name, options, function (err) {
+//     if (err) {
+//       console.log(err)
+//     } else {
+//       console.log('Sent:', filename)
+//     }
+//   })
+// })
 
 function getLoaclIp() {
   var ifaces = require("os").networkInterfaces();
@@ -273,6 +244,6 @@ for (var dev in ifaces) {
         address = iface[0].address;
         return address;
     }
-}
+ }
 }
 

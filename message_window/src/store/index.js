@@ -5,8 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    username: "hello",
-    color: "haha",
+    username: "李",
+    color: "red",
     loginState: false,
     serverIp: "192.168.0.30",
   },
