@@ -33,9 +33,7 @@
           <div
             id="text-message"
             class="pa-1 message-text-content"
-            :style="
-              styleObject
-            "
+            :style="styleObject"
           >
             <div class="text-content">
               {{ message.data }}
@@ -48,8 +46,7 @@
           <div
             id="file-message"
             class="pa-1 message-text-content"
-            v-bind:style="styleObject"
-            
+            :style="styleObject"
             v-on:dblclick="downloadFile"
           >
             <v-img
@@ -172,7 +169,6 @@ export default {
 #message-part {
   display: flex;
   flex-direction: column;
-  background-color: ;
   /* margin-bottom: 1.5rem; */
 }
 </style>
