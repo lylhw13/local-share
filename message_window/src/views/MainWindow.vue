@@ -1,8 +1,13 @@
 <template>
-  <v-container fill-height class="grey lighten-3" flex>
+  <v-container class="red lighten-4 pa-1" flex >
+    <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
+      {{errorMsg}}
+      <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+    </v-snackbar>
+
     <div id="main">
       <div id="messages-window">
-        <v-list color="purple lighten-3 pr-2" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px)`}">
+        <v-list color="grey lighten-5 pa-1" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px - 8px)`}">
           <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
@@ -12,7 +17,7 @@
         </v-list>
       </div>
 
-      <div id="input-window" style="background-color:red;" ref="inputWindow">
+      <div id="input-window" ref="inputWindow" class="grey lighten-3" >
           <div style="width:1rem;">
           <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15"
             v-bind:disabled="inputText.length > 0">
@@ -20,12 +25,12 @@
           </div>
 
           <v-textarea id="input"
-          background-color="primary"
-            color="red"
             v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
             no-resize
             outlined
+            flat
             hide-details
+            dense
             placeholder="Input your message..."
             v-model="inputText"
             v-bind:disabled="inputFile.length > 0"
@@ -38,6 +43,7 @@
           
       </div>
     </div>
+        
   </v-container>
 </template>
 
@@ -57,6 +63,8 @@ export default {
       inputFile: [],
       height:500,
       loading: false,
+      errorMsg:"",
+      snackbar: false,
       // username: "",
       // messages: [],
       messages: [{
@@ -97,7 +105,7 @@ export default {
       if (this.$vuetify.breakpoint.lgAndUp)
         return 90
       else
-        return 77
+        return 80
     }
   },
 
@@ -181,13 +189,15 @@ export default {
               t_msg.receive = true
               t_msg.path = response.data.path
               socket.emit('new message', t_msg);
-              // console.log(t_msg)
               this.loading = false
               this.inputFile = []
             })
             .catch(error => {
               console.log("upload error")
               console.log(error)
+              this.loading = false
+              this.errorMsg = error
+              this.snackbar = true
             })
 
             this.loading = true
@@ -200,7 +210,7 @@ export default {
           time: Date.now(),
           receive: false,
           username: "hello",
-          color: this.color,
+          color: "pink",
           type: "text"
         }
         this.messages.push(msg);
@@ -225,6 +235,7 @@ export default {
 #scrollable {
   overflow-x:hidden;
   overflow-y: auto;
+  scrollbar-width: thin;
   /* height: calc(100vh - 22rem); */
 }
 .v-container {

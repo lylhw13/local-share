@@ -1,8 +1,6 @@
 <template>
-<div>
-      <div id="message-title" class="pd-0 ma-1 d-flex flex-column"
-      :class="message.receive ?'align-start':'align-end'">
-      <div class="grey lighten-4">
+<div class="red pa-0 ma-1 d-flex flex-column" :class="{'flex-row-reverse': !message.receive}">
+  <div id="message-title" class="mb-1 grey lighten-1">
         <span v-bind:color="message.color" class="font-weight-bold"
           >{{ message.username }}&emsp;</span
         >
@@ -10,26 +8,34 @@
           toFormatDate(message.time)
         }}</span>
       </div>
-      </div>
-  <div id="message-box"  class="pa-0 ma-0 d-flex flex-row" :class="{'flex-row-reverse': !message.receive}">
+  <div id="message-box"  class="grey lighten-3 pa-0 ma-1 d-flex flex-row" :class="{'flex-row-reverse': !message.receive}">
     <div id="avatar" class="d-flex align-end">
-      <v-avatar v-bind:color="message.color" size="40">
+      <v-avatar v-bind:color="message.color" size='40'>
         <span class="white--text headline">{{
           message.username[0].toUpperCase()
         }}</span>
       </v-avatar>
     </div>
 
-
     <div
       id="message-part"
       class="ma-0 mb-5 ml-1 mr-1 d-flex flex-column"
+      :class="message.receive ?'align-start':'align-end'"
     >
+      <!-- <div id="message-title" class="mb-1 grey lighten-1">
+        <span v-bind:color="message.color" class="font-weight-bold"
+          >{{ message.username }}&emsp;</span
+        >
+        <span class="font-weight-light caption">{{
+          toFormatDate(message.time)
+        }}</span>
+      </div> -->
+
       <!-- text part -->
       <template v-if="message.type === 'text'">    
         <div
           id="text-message"
-          class="pa-1 blue lighten-2 message-text-content"
+          class="pa-1 orange message-text-content"
           :style="
             message.receive
               ? `border-bottom-right-radius: 0.5rem;`
@@ -46,21 +52,15 @@
       <template v-if="message.type === 'file'">
         <div
           id="file-message"
-          class="pa-1 green lighten-2 message-text-content"
+          class="pa-1 orange message-text-content"
           :style="
             message.receive
               ? `border-bottom-right-radius: 0.5rem;`
               : `border-bottom-left-radius: 0.5rem;`
           "
-          v-on:dblclick="downloadFile"
+          v-on:click="downloadFile"
         >
-        <v-img
-          :src="require('../assets/file.png')"
-          class="my-0"
-          contain
-          height="50"
-          width="50"
-        />
+        <!-- <v-icon large>mdi-file-document-multiple-outline</v-icon> -->
           <div  class="align-self-center text-content">
           {{ message.data }}
           </div>
@@ -73,7 +73,7 @@
       </template>
     </div>
   </div>
-</div>
+  </div>
 </template>
 
 

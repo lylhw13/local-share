@@ -1,5 +1,11 @@
 <template>
   <v-container fill-height d-flex flex-column>
+
+    <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
+      {{errorMsg}}
+      <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+    </v-snackbar>
+
     <span id="title">{{ pageTitle }}</span>
     <div id="content" v-bind:style="$vuetify.breakpoint.mdAndDown ? 'width:100%;' : 'width:50%;'">
       <v-flex d-flex align-center flex-column>
@@ -13,9 +19,6 @@
           :rules="rules.notempty"
           required
           outlined
-          xs12
-          sm6
-          md4
           v-model="username"
         >
         </v-text-field>
@@ -31,6 +34,7 @@
           required
           outlined
           v-model="password"
+          type="password"
         >
         </v-text-field>
 
@@ -59,16 +63,6 @@
         <v-btn v-on:click="login" class="ma-6 align-center">{{ btnTxt }}</v-btn>
       </v-flex>
     </div>
-
-    <v-alert
-      v-model="alert"
-      border="left"
-      close-text="Close Alert"
-      color="deep-purple accent-4"
-      dark
-      dismissible
-    >
-    </v-alert>
   </v-container>
 </template>
 
@@ -84,7 +78,8 @@ export default {
       pageTitle: this.isServerPage ? "Server Setting" : "Please Login",
       btnTxt: this.isServerPage ? "Setting" : "Login",
       dialog: false,
-      alert: false,
+      errorMsg: "",
+      snackbar: false,
       rules: {
         notempty: [(val) => (val || "").length > 0 || "This field is required"],
       },
@@ -98,7 +93,6 @@ export default {
     // console.log("port is " + currentUrl.port);
     if (currentUrl.hostname === "127.0.0.1") {
       this.isServerPage = true;
-    //   console.log("server page");
     }
   },
   computed: {
@@ -119,10 +113,6 @@ export default {
       if (!this.username || !this.password) {
         return;
       }
-
-      console.log("username is " + this.username);
-      console.log("password is " + this.password);
-      console.log(this.isServerPage);
 
     //         this.$store.commit("setUsername", this.username);
     //         this.$store.commit("setLoginState", true);
@@ -176,7 +166,9 @@ export default {
             that.username = "";
           }
           // that.alert = true
-          alert(error.response.data.message);
+          //alert(error.response.data.message);
+          this.errorMsg = error.response.data.message;
+          this.snackbar = true
         //   return;
         });
 
