@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav id="navbar">
     <v-app-bar flat app dense>
       <v-toolbar-title class="text-uppercase grey--text">
         <span class="font-weight-light">Local</span>
@@ -16,7 +16,7 @@
         <span class="hidden-sm-and-down">Join</span>
         <v-icon right>mdi-plus</v-icon>
       </v-btn>
-      <v-btn text color="grey" v-on:click="exitApp">
+      <v-btn text color="grey" v-on:click="exitApp" v-show="loginState">
         <span class="hidden-sm-and-down">Sign Out</span>
         <v-icon right>mdi-logout</v-icon>
       </v-btn>
@@ -50,6 +50,7 @@ export default {
       loginState() {
           return this.$store.state.loginState;
       }
+
   },
   watch: {
     dialog: function (val) {

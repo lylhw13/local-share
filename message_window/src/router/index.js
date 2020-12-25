@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 // import Home from '../views/Home.vue'
+import store from "../store/index"
 
 Vue.use(VueRouter)
 
@@ -32,8 +33,19 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
+  mode: 'history',
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const isLogged = store.state.loginState;
+
+  if (isLogged && to.name === 'Login')
+    next({name: 'MessageWindow'})
+  else if (!isLogged && to.name === 'MessageWindow')
+    next({name: 'Login'})
+  else
+    next()
 })
 
 export default router

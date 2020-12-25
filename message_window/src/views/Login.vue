@@ -125,7 +125,7 @@ export default {
         url = "/api/setting";
       }
 
-      const that = this;
+      // const that = this;
       console.log("axios");
       axios({
         method: "post",
@@ -136,12 +136,12 @@ export default {
           color: this.color,
         },
       })
-        .then(function (response) {
+        .then( (response) => {
           console.log("response " + response.data.serverIp);
             
-          if (that.isServerPage) {
-            that.$store.commit("setServerIp", response.data.serverIp)
-            console.log("srever ip is" + that.$store.state.serverIp)
+          if (this.isServerPage) {
+            this.$store.commit("setServerIp", response.data.serverIp)
+            console.log("srever ip is" + this.$store.state.serverIp)
           }
 
             // checking password
@@ -149,26 +149,31 @@ export default {
             // that.$store.commit("setLoginState", true);
             // console.log("log state is " + that.$store.state.loginState)
             // that.$router.push("/MessageWindow");
-            that.$store.commit("setUsername", that.username);
-            that.$store.commit("setLoginState", true);
-            that.$store.commit("setColor", that.color);
-            console.log("usename is " + that.$store.state.username);
-            console.log("log state is " + that.$store.state.loginState);
-            that.$router.push("/messagewindow");
+            this.$store.commit("setUsername", this.username);
+            this.$store.commit("setLoginState", true);
+            this.$store.commit("setColor", this.color);
+            console.log("usename is " + this.$store.state.username);
+            console.log("log state is " + this.$store.state.loginState);
+            this.$router.push("/messagewindow");
         })
-        .catch(function (error) {
+        .catch( (error) => {
           console.log("error " + error);
           console.log("error response ")
           console.log(error.response.data)
           if (error.response.status === '401') {
-            that.password = "";
+            this.password = "";
           } else if (error.response.status === '409') {
-            that.username = "";
+            this.username = "";
           }
           // that.alert = true
           //alert(error.response.data.message);
           this.errorMsg = error.response.data.message;
           this.snackbar = true
+
+          this.$store.commit("setLoginState", true);
+          this.$router.push("/messagewindow");
+          // window.history.forward(1)
+
         //   return;
         });
 

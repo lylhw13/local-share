@@ -1,5 +1,5 @@
 <template>
-  <v-container id="container" class="primary lighten-4 pa-1" flex fill-height align-start>
+  <v-container id="container" pa-1 flex fill-height align-start >
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
       <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
@@ -7,7 +7,7 @@
 
     <!-- <div id="main"> -->
       <div id="messages-window" v-bind:style="{'height': `${messageWindowHeight}px`}">
-        <v-list color="white pa-1 ma-0" id="scrollable" style="height:100%;" >
+        <v-list color="red lighten-4 pa-1 ma-0 pb-2" id="scrollable" style="height:100%;" >
         <!-- v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px - 8px)`}"> -->
           <div id="message-row"
             v-for="(item, index) in messages"
@@ -19,14 +19,13 @@
       </div>
     <!-- </div> -->
 
-          <div id="input-window" ref="inputWindow" class="grey lighten-3" v-bind:style="{ 'width': `${inputWindowWidth}px`}">
-          <!-- <div id="input-window" ref="inputWindow" class="grey lighten-3" v-bind:width=""> -->
+          <div id="input-window" ref="inputWindow" class="grey lighten-4" v-bind:style="{ 'width': `${inputWindowWidth}px`}">
           <div style="width:1rem;">
-          <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15"
+          <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-4" disable-input class="ma-0 pa-0" truncate-length="15"
             v-bind:disabled="inputText.length > 0">
           </v-file-input>
           </div>
-          <div class="d-flex flex-row pb-1">
+          <div class="d-flex flex-row pb-2">
             <v-textarea id="input"
               v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
               no-resize
@@ -59,7 +58,11 @@ const axios = require("axios");
 const FormData = require('form-data');
 const io = require('socket.io-client');
 var socket = io();
+
+// var innerHeight = require('ios-inner-height');
+
 const imgExts = new Set(['png','jpg','jpeg','jfif','gif','bmp', 'svg','tiff', 'tif'])
+
 
 export default {
   data() {
@@ -142,25 +145,40 @@ export default {
       window.addEventListener('resize', this.onResize)
       this.onResize()
     })
-
-    // this.height =document.getElementById("input-window").offsetHeight
   },
+  activated() {
+    console.log("mainwindow activated");
+  },
+  deactivated() {
+    console.log("mainwindow deactivated");
+  },
+  // beforeDestroy(){
+  //   console.log("mainwindow beforedestory")
+  // },
+  destroyed() {
+    console.log("mainwindow destory")
+  },
+  
   updated() {
         var container = this.$el.querySelector('#scrollable');
         container.scrollTop = container.scrollHeight;
   },
   beforeDestroy() {
+    console.log("mainwindow beforedestory")
+    // socket.emit("")
     window.removeEventListener('resize', this.onResize);
   },
 
   methods: {
+    containerClass(){
+      return this.$store.state.color// + ' lighten-4'
+      // return "white"
+    },
     onResize(){
       this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
-      console.log(this.inputWindowWidth)
-      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight -8;
-      // console.log(window.innerHeight)
-      // console.log(document.getElementById("container").offsetHeight)
-      // console.log(document.getElementById("input-window").offsetHeight)
+      // this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - document.getElementById("navbar").offsetHeight;
+      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - 51;
+      // this.messageWindowHeight = document.getElementById("container").offsetHeight - document.getElementById("input-window").offsetHeight;
     },
       loaded(){
         console.log("load finish")
