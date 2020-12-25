@@ -1,13 +1,14 @@
 <template>
-  <v-container class="red lighten-4 pa-1" flex >
+  <v-container id="container" class="primary lighten-4 pa-1" flex fill-height align-start>
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
       <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
     </v-snackbar>
 
-    <div id="main">
-      <div id="messages-window">
-        <v-list color="grey lighten-5 pa-1" id="scrollable" v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px - 8px)`}">
+    <!-- <div id="main"> -->
+      <div id="messages-window" v-bind:style="{'height': `${messageWindowHeight}px`}">
+        <v-list color="white pa-1 ma-0" id="scrollable" style="height:100%;" >
+        <!-- v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px - 8px)`}"> -->
           <div id="message-row"
             v-for="(item, index) in messages"
             :key="index"
@@ -16,33 +17,37 @@
           </div>
         </v-list>
       </div>
+    <!-- </div> -->
 
-      <div id="input-window" ref="inputWindow" class="grey lighten-3" >
+          <div id="input-window" ref="inputWindow" class="grey lighten-3" v-bind:style="{ 'width': `${inputWindowWidth}px`}">
+          <!-- <div id="input-window" ref="inputWindow" class="grey lighten-3" v-bind:width=""> -->
           <div style="width:1rem;">
           <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-3" disable-input class="ma-0 pa-0" truncate-length="15"
             v-bind:disabled="inputText.length > 0">
           </v-file-input>
           </div>
+          <div class="d-flex flex-row pb-1">
+            <v-textarea id="input"
+              v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
+              no-resize
+              outlined
+              flat
+              hide-details
+              dense
+              placeholder="Input your message..."
+              v-model="inputText"
+              v-bind:disabled="inputFile.length > 0"
+            >
+            </v-textarea>
 
-          <v-textarea id="input"
-            v-bind:rows="$vuetify.breakpoint.mobile ? 1 : 3"
-            no-resize
-            outlined
-            flat
-            hide-details
-            dense
-            placeholder="Input your message..."
-            v-model="inputText"
-            v-bind:disabled="inputFile.length > 0"
-          >
-          </v-textarea>
+            <v-btn v-on:click="send" fab small class="align-self-center ml-1 mr-1" v-bind:loading="loading">
+              
+              <v-icon>mdi-send</v-icon>
+            </v-btn>
+          </div>
 
-          <v-btn v-on:click="send" class="align-self-end ma-1 mr-5" v-bind:loading="loading">
-            发送
-          </v-btn>
           
       </div>
-    </div>
         
   </v-container>
 </template>
@@ -65,6 +70,9 @@ export default {
       loading: false,
       errorMsg:"",
       snackbar: false,
+      sheet: false,
+      inputWindowWidth: 500,
+      messageWindowHeight: 500,
       // username: "",
       // messages: [],
       messages: [{
@@ -72,7 +80,7 @@ export default {
           data:"渣渣的苹果",
           time: Date.now(),
           receive: false,  
-          username: "李",
+          username: "hello",
           color: "red",
           info: {
             path: "",
@@ -83,7 +91,7 @@ export default {
           data:"哈哈哈，你怎么这么渣",
           time: Date.now(),
           receive: true,  
-          username: "兵",
+          username: "hello",
           color: "blue",
       }],
     };
@@ -104,7 +112,8 @@ export default {
         return 90
       else
         return 80
-    }
+    },
+
   },
 
   beforeCreate() {
@@ -112,11 +121,7 @@ export default {
       //     this.$router.push("/");
       // }
   },
-  // beforeMount() {
-  //     const currentUrl = new URL(window.location.href);
-  //     this.clientUrl = currentUrl.hostname + ':' + currentUrl.port
-  //     // console.log("current url is " + this.clientUrl)
-  // },
+
   mounted() {
     console.log("mainwindow mounted")
     // new message
@@ -133,22 +138,30 @@ export default {
       this.$router.push("/");
     }),
 
-    this.height =document.getElementById("input-window").offsetHeight
-  },
-  // watch: {
-  //   messages:function(){
-  //     console.log("watch")
-  //     var container = this.$el.querySelector('#scrollable');
-  //       container.scrollTop = container.scrollHeight;
-  //   }
-  // },
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize)
+      this.onResize()
+    })
 
+    // this.height =document.getElementById("input-window").offsetHeight
+  },
   updated() {
         var container = this.$el.querySelector('#scrollable');
         container.scrollTop = container.scrollHeight;
   },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
+  },
 
   methods: {
+    onResize(){
+      this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
+      console.log(this.inputWindowWidth)
+      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight -8;
+      // console.log(window.innerHeight)
+      // console.log(document.getElementById("container").offsetHeight)
+      // console.log(document.getElementById("input-window").offsetHeight)
+    },
       loaded(){
         console.log("load finish")
         this.scrollUp()
@@ -245,17 +258,17 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* align-items: stretch; */
-  /* justify-content: space-between; */
 }
 #messages-window {
+  width: 100%;
   background-color: dark;
-  /* flex: 1; */
 }
 
 #input-window {
-  display: flex;
-  flex-direction: column;
+  position: fixed;
+  bottom: 0px;
+  z-index: 1;
+  background-color: aqua;
 }
 
 /* .v-textarea {

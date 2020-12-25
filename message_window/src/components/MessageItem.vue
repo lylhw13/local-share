@@ -5,7 +5,7 @@
       class="pd-0 ma-1 d-flex flex-column"
       :class="message.receive ? 'align-start' : 'align-end'"
     >
-      <div class="grey lighten-4 pt-2">
+      <div class="white pt-2">
         <span v-bind:color="message.color" class="font-weight-bold"
           >{{ message.username }}&emsp;</span
         >

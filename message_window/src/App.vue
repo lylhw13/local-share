@@ -8,6 +8,7 @@
       <router-link to="*"></router-link>
       <router-view></router-view>
     </v-main>
+   
   </v-app>
 </template>
 
@@ -27,6 +28,7 @@ export default {
 
   data: () => ({
     //
+    sheet: false,
   }),
 };
 </script>
