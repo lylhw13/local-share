@@ -28,6 +28,7 @@
       </div>
 
       <div id="message-part" class="ma-0 mb-5 d-flex flex-column">
+
         <!-- text part -->
         <template v-if="message.type === 'text'">
           <div

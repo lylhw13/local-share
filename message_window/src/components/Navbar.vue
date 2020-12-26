@@ -80,9 +80,8 @@ export default {
 
   methods: {
     exitApp() {
-      console.log("username is " + this.$store.state.username);
-      this.$store.commit("setUsername", 123);
-      console.log("username is " + this.$store.state.username);
+      this.$store.commit('setLoginState', false)
+      this.$router.push('/')
     },
   },
 };
@@ -104,7 +103,6 @@ export default {
   background-color: #fff;
   padding: 5px;
   border: solid 2px;
-  /* margin: 5px; */
   margin: auto;
 }
 </style>>

@@ -1,5 +1,5 @@
 <template>
-  <v-container id="container" pa-1 fill-height flex align-start v-bind:class="containerClass()">
+  <v-container id="container" fill-height flex align-start v-bind:style="containerColor">
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
       <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
@@ -12,7 +12,22 @@
             v-for="(item, index) in messages"
             :key="index"
             >
-          <message-item :message="item" v-on:loaded="loaded"></message-item>
+
+          <template v-if="item.type === 'info'">
+            <!-- <v-flex class="d-flex justify-center fill-width"> -->
+              <div class="d-flex justify-center" style="background-color:white; width:100%">
+              <span class="font-weight-light caption">用户</span>
+              <span class="font-weight-bold caption ml-1 mr-1">{{item.username}}</span>
+              <span class="font-weight-light caption">{{item.data}}，目前共有{{item.num}}位用户</span> 
+              <!-- hello -->
+            </div>
+            <!-- </v-flex> -->
+          </template>
+
+          <template v-else>
+            <message-item :message="item" v-on:loaded="loaded"></message-item>
+
+          </template>
           </div>
         </v-list>
       </div>
@@ -55,9 +70,11 @@ import MessageItem from '../components/MessageItem.vue';
 const axios = require("axios");
 const FormData = require('form-data');
 const io = require('socket.io-client');
-var socket = io();
+const socket = io({
+  autoConnect: false,
+  reconnectionAttempts: 100,
+});
 
-// var innerHeight = require('ios-inner-height');
 
 const imgExts = new Set(['png','jpg','jpeg','jfif','gif','bmp', 'svg','tiff', 'tif'])
 
@@ -78,22 +95,32 @@ export default {
       // messages: [],
       messages: [{
           type: "file",
-          data:"渣渣的苹果",
+          data:"我的苹果呢？",
           time: Date.now(),
           receive: false,  
-          username: "hello",
+          username: "李渣",
           color: "red",
           info: {
             path: "",
             name: "",
           }
       },{
+        type:"info",
+        data: "加入",
+        username: "周杰伦",
+        num: 2
+      },{
           type: "text",
           data:"哈哈哈，你怎么这么渣",
           time: Date.now(),
           receive: true,  
-          username: "hello",
+          username: "周杰伦",
           color: "blue",
+      },{
+        type:"info",
+        data: "离开",
+        username: "周杰伦",
+        num: 1
       }],
     };
   },
@@ -108,53 +135,47 @@ export default {
     color() {
       return this.$store.state.color;
     },
-    mainHeight() {
-      if (this.$vuetify.breakpoint.lgAndUp)
-        return 90
-      else
-        return 80
+
+    containerColor: function(){
+      // return 'border: 2px ' + this.$store.state.color
+      return 'border: 2px solid red'
     },
 
   },
 
   beforeCreate() {
-      // if ( !this.$store.state.loginState ) {
-      //     this.$router.push("/");
-      // }
+      if ( !this.$store.state.loginState ) {
+          this.$router.push("/");
+      }
+  },
+  created() {
+    console.log("mainwindow created")
+    socket.connect()
   },
 
   mounted() {
     console.log("mainwindow mounted")
-    // new message
+
+    socket.emit('add user', {
+      username: this.$store.state.username,
+    })
+
+
     socket.on('new message', (msg) => {
       console.log("new message")
       console.log(msg)
       this.messages.push(msg);
-      // this.scrollUp()
-    }),
+    })
 
-    // cancel all login state
-    socket.on('change host password', () => {
-      this.$store.commit("setLoginState", false);
-      this.$router.push("/");
-    }),
+    socket.on('reset', () => {
+      this.$store.commit('setLoginState', false)
+      this.$router.push('/')
+    })
 
     this.$nextTick(() => {
       window.addEventListener('resize', this.onResize)
       this.onResize()
     })
-  },
-  activated() {
-    console.log("mainwindow activated");
-  },
-  deactivated() {
-    console.log("mainwindow deactivated");
-  },
-  // beforeDestroy(){
-  //   console.log("mainwindow beforedestory")
-  // },
-  destroyed() {
-    console.log("mainwindow destory")
   },
   
   updated() {
@@ -163,17 +184,21 @@ export default {
   },
   beforeDestroy() {
     console.log("mainwindow beforedestory")
-    // socket.emit("")
+
+    socket.emit('user left', {
+      username: this.$store.state.username
+    })
+    socket.disconnect()
+
     window.removeEventListener('resize', this.onResize);
   },
 
   methods: {
     containerClass(){
-      return this.$store.state.color + ' lighten-4'
-      // return "white"
+      return this.$store.state.color
     },
     onResize(){
-      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - 52;
+      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - 50;
       // this.messageWindowHeight = document.getElementById("container").offsetHeight - document.getElementById("input-window").offsetHeight;
       this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
     },
@@ -269,11 +294,12 @@ export default {
   overflow: hidden;
 } */
 
-/* #container {
-  height: 1px;
-  min-height: 100%;
-  background-color: aqua;
-} */
+#container {
+  padding: 2px;
+  /* height: 1px; */
+  /* min-height: 100%; */
+  /* background-color: aqua; */
+}
 #main {
   height: 100%;
   width: 100%;

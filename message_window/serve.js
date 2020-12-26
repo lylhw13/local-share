@@ -4,12 +4,18 @@ const app = express();
 const path = require('path');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const {getLocalIp} = require("./util/local_ip");
+const multer = require("multer")
+const mime = require('mime-types')
+
+
+const fileFolder = "./temp/"
+var upload = multer({dest: fileFolder})
 
 // const port = process.env.PORT || 10001;
 const port = 10001;
 
 // import {getLocalIp} from "./util/local_ip.mjs"
-const {getLocalIp} = require("./util/local_ip");
 
 server.listen(port, () => {
   console.log('Server listening at port %d', port);
@@ -19,73 +25,12 @@ server.listen(port, () => {
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
 
-let numUsers = 0;
-
-io.on('connection', (socket) => {
-  let addedUser = false;
-
-  // when the client emits 'new message', this listens and executes
-  socket.on('new message', (data) => {
-
-    console.log(socket.request.connection.remoteAddress);
-    socket.broadcast.emit('new message', data);
-  });
-
-  // when the client emits 'add user', this listens and executes
-  socket.on('add user', (username) => {
-    if (addedUser) return;
-
-    // we store the username in the socket session for this client
-    socket.username = username;
-    ++numUsers;
-    addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers
-    });
-    // echo globally (all clients) that a person has connected
-    socket.broadcast.emit('user joined', {
-      username: socket.username,
-      numUsers: numUsers
-    });
-  });
-
-  // when the client emits 'typing', we broadcast it to others
-  socket.on('typing', () => {
-    socket.broadcast.emit('typing', {
-      username: socket.username
-    });
-  });
-
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on('stop typing', () => {
-    socket.broadcast.emit('stop typing', {
-      username: socket.username
-    });
-  });
-
-  // when the user disconnects.. perform this
-  socket.on('disconnect', () => {
-    if (addedUser) {
-      --numUsers;
-
-      // echo globally that this client has left
-      socket.broadcast.emit('user left', {
-        username: socket.username,
-        numUsers: numUsers
-      });
-
-      if (numUsers === 0) {
-        console.log("curr process is " + process.pid + " there is no user");
-        process.exit()
-      }
-    }
-  });
-});
-
 app.use(express.json())
-var g_password = ""
+var g_password = "admin"  // default password
 var g_username = ""
 let userinfos = new Map();  // username host
+
+let numUsers = 0;
 
 // setting password
 app.post('/api/setting', (req, res) => {
@@ -109,15 +54,12 @@ app.post('/api/setting', (req, res) => {
   //make all already login state false
 })
 
-
 // check password
 app.post('/api/login', (req, res) => {
   console.log("login");
   const data = req.body
   const c_username = data.username
   const c_url = req.get('host')
-  // console.log(c_url)
-
 
   if (data.password !== g_password) {
     return res.status(401).send({
@@ -140,12 +82,9 @@ app.post('/api/login', (req, res) => {
   return res.status(200).send({
     message: "OK"
   })
-  // const username = req.body.username
 })
 
-const multer = require("multer")
-const fileFolder = "./temp/"
-var upload = multer({dest: fileFolder})
+
 
 app.post('/api/upload_file', upload.single("file"), (req, res) => {
   console.log("upload_file")
@@ -164,16 +103,11 @@ app.post('/api/upload_file', upload.single("file"), (req, res) => {
   //   size: 35870253
   // }
 
-  // io.sockets.emit("new message", msg)
-
   return res.status(200).send({
-    // path: protocol + hostname + ":10001/temp/" + req.file.filename
     path: "/temp/" + req.file.filename
-    // name: req.file.filename
   })
 })
 
-var mime = require('mime-types')
 
 app.get('/temp/:name', (req,res) => {
   console.log("download")
@@ -197,6 +131,63 @@ app.get('/temp/:name', (req,res) => {
     }
   })
 })
+
+
+io.on('connection', (socket) => {
+  console.log("socket connect")
+
+  // when the client emits 'new message', this listens and executes
+  socket.on('new message', (data) => {
+    // console.log(socket.request.connection.remoteAddress);
+    socket.broadcast.emit('new message', data);
+  });
+
+  socket.on('add user', (username) => {
+    console.log("add user")
+    console.log(username)
+    socket.broadcast.emit('new message', {
+      username: username,
+      num: userinfos.size + 1,
+      data: "加入",
+      type: 'info'
+    });
+  });
+
+  socket.on('user left', (username) => {
+    if (username === g_username) {
+      g_username = ""
+      socket.broadcast.emit("reset");
+      userinfos.clear()
+    }
+    else {
+      userinfos.delete(username)
+      socket.broadcast.emit('new message', {
+        username: username,
+        num: userinfos.size + 1,
+        data: "离开",
+        type: 'info'
+      });
+    }
+  });
+
+  // when the client emits 'typing', we broadcast it to others
+  // socket.on('typing', () => {
+  //   socket.broadcast.emit('typing', {
+  //     username: socket.username
+  //   });
+  // });
+
+  // when the user disconnects.. perform this
+  socket.on('disconnect', () => {
+    console.log("socket disconnect")
+    
+    if (g_username === "" && userinfos.size === 0) {
+      console.log("curr process is " + process.pid + " there is no user");
+      process.exit()
+    }
+  });
+});
+
 
 // app.get('/temp', (req, res) =>{
 //   console.log("download");
@@ -228,22 +219,4 @@ app.get('/temp/:name', (req,res) => {
 //     }
 //   })
 // })
-
-function getLoaclIp() {
-  var ifaces = require("os").networkInterfaces();
-for (var dev in ifaces) {
-    var iface = ifaces[dev].filter((details) => {
-        return (
-            details.family === "IPv4" &&
-            details.internal === false &&
-            !details.mac.startsWith("00:50:56")
-        );
-    });
-
-    if (iface.length > 0) {
-        address = iface[0].address;
-        return address;
-    }
- }
-}
 
