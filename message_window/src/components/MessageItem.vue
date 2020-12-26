@@ -19,7 +19,7 @@
       class="pa-0 ma-0 d-flex flex-row"
       :class="{ 'flex-row-reverse': !message.receive }"
     >
-      <div id="avatar" class="d-flex align-end">
+      <div id="avatar" class="d-flex align-end pa-1">
         <v-avatar v-bind:color="message.color" size="40">
           <span class="white--text headline">{{
             message.username[0].toUpperCase()
@@ -27,12 +27,12 @@
         </v-avatar>
       </div>
 
-      <div id="message-part" class="ma-0 mb-5 ml-1 mr-1 d-flex flex-column">
+      <div id="message-part" class="ma-0 mb-5 d-flex flex-column">
         <!-- text part -->
         <template v-if="message.type === 'text'">
           <div
             id="text-message"
-            class="pa-1 message-text-content"
+            class="message-text-content"
             :style="styleObject"
           >
             <div class="text-content">
@@ -45,7 +45,7 @@
         <template v-if="message.type === 'file'">
           <div
             id="file-message"
-            class="pa-1 message-text-content"
+            class="message-text-content"
             :style="styleObject"
             v-on:dblclick="downloadFile"
           >

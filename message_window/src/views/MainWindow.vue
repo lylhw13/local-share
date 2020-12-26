@@ -1,13 +1,12 @@
 <template>
-  <v-container id="container" pa-1 flex fill-height align-start >
+  <v-container id="container" pa-1 fill-height flex align-start v-bind:class="containerClass()">
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
       <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
     </v-snackbar>
 
-    <!-- <div id="main"> -->
       <div id="messages-window" v-bind:style="{'height': `${messageWindowHeight}px`}">
-        <v-list color="red lighten-4 pa-1 ma-0 pb-2" id="scrollable" style="height:100%;" >
+        <v-list color="white lighten-4" pa-1 pb-2 id="scrollable" style="height:100%;" >
         <!-- v-bind:style="{ 'height': `calc(${mainHeight}vh - ${height}px - 8px)`}"> -->
           <div id="message-row"
             v-for="(item, index) in messages"
@@ -17,9 +16,8 @@
           </div>
         </v-list>
       </div>
-    <!-- </div> -->
 
-          <div id="input-window" ref="inputWindow" class="grey lighten-4" v-bind:style="{ 'width': `${inputWindowWidth}px`}">
+        <div id="input-window" ref="inputWindow" class="grey lighten-4" v-bind:style="{ 'width': `${inputWindowWidth}px`}">
           <div style="width:1rem;">
           <v-file-input v-model="inputFile" multiple chips show-size flat solo dense hide-details background-color="grey lighten-4" disable-input class="ma-0 pa-0" truncate-length="15"
             v-bind:disabled="inputText.length > 0">
@@ -74,8 +72,8 @@ export default {
       errorMsg:"",
       snackbar: false,
       sheet: false,
-      inputWindowWidth: 500,
-      messageWindowHeight: 500,
+      inputWindowWidth: 300,
+      messageWindowHeight: 300,
       // username: "",
       // messages: [],
       messages: [{
@@ -171,14 +169,13 @@ export default {
 
   methods: {
     containerClass(){
-      return this.$store.state.color// + ' lighten-4'
+      return this.$store.state.color + ' lighten-4'
       // return "white"
     },
     onResize(){
-      this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
-      // this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - document.getElementById("navbar").offsetHeight;
-      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - 51;
+      this.messageWindowHeight = window.innerHeight - document.getElementById("input-window").offsetHeight - 52;
       // this.messageWindowHeight = document.getElementById("container").offsetHeight - document.getElementById("input-window").offsetHeight;
+      this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
     },
       loaded(){
         console.log("load finish")
@@ -266,11 +263,17 @@ export default {
   scrollbar-width: thin;
   /* height: calc(100vh - 22rem); */
 }
-.v-container {
+/* .v-container {
   background-color: bisque;
   height: 100%;
   overflow: hidden;
-}
+} */
+
+/* #container {
+  height: 1px;
+  min-height: 100%;
+  background-color: aqua;
+} */
 #main {
   height: 100%;
   width: 100%;
@@ -279,14 +282,12 @@ export default {
 }
 #messages-window {
   width: 100%;
-  background-color: dark;
 }
 
 #input-window {
   position: fixed;
   bottom: 0px;
   z-index: 1;
-  background-color: aqua;
 }
 
 /* .v-textarea {

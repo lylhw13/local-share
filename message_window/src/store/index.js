@@ -8,7 +8,7 @@ export default new Vuex.Store({
     username: "周杰伦",
     color: "red",
     loginState: false,
-    serverIp: "192.168.0.30",
+    serverIp: "192.168.0.101",
   },
   mutations: {
     setUsername(state, username) {
