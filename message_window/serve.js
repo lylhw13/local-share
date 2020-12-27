@@ -8,14 +8,11 @@ const {getLocalIp} = require("./util/local_ip");
 const multer = require("multer")
 const mime = require('mime-types')
 
-
 const fileFolder = "./temp/"
 var upload = multer({dest: fileFolder})
 
 // const port = process.env.PORT || 10001;
 const port = 10001;
-
-// import {getLocalIp} from "./util/local_ip.mjs"
 
 server.listen(port, () => {
   console.log('Server listening at port %d', port);
@@ -29,8 +26,6 @@ app.use(express.json())
 var g_password = "admin"  // default password
 var g_username = ""
 let userinfos = new Map();  // username host
-
-let numUsers = 0;
 
 // setting password
 app.post('/api/setting', (req, res) => {
@@ -51,7 +46,6 @@ app.post('/api/setting', (req, res) => {
   return res.status(200).send({
     serverIp: getLocalIp()
   })
-  //make all already login state false
 })
 
 // check password
@@ -90,7 +84,6 @@ app.post('/api/upload_file', upload.single("file"), (req, res) => {
   console.log("upload_file")
   console.log("file: ")
   console.log(req.file)
-  // console.log(req)
 
   // {
   //   fieldname: 'file',
@@ -136,33 +129,33 @@ app.get('/temp/:name', (req,res) => {
 io.on('connection', (socket) => {
   console.log("socket connect")
 
-  // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {
     // console.log(socket.request.connection.remoteAddress);
     socket.broadcast.emit('new message', data);
   });
 
-  socket.on('add user', (username) => {
-    console.log("add user")
-    console.log(username)
+  socket.on('user join', (data) => {
+    console.log("user join")
+    console.log(data.username)
     socket.broadcast.emit('new message', {
-      username: username,
+      username: data.username,
       num: userinfos.size + 1,
       data: "加入",
       type: 'info'
     });
   });
 
-  socket.on('user left', (username) => {
-    if (username === g_username) {
+  socket.on('user left', (data) => {
+    console.log("user left " + data.username)
+    if (data.username === g_username) {
       g_username = ""
       socket.broadcast.emit("reset");
       userinfos.clear()
     }
     else {
-      userinfos.delete(username)
+      userinfos.delete(data.username)
       socket.broadcast.emit('new message', {
-        username: username,
+        username: data.username,
         num: userinfos.size + 1,
         data: "离开",
         type: 'info'
@@ -177,13 +170,16 @@ io.on('connection', (socket) => {
   //   });
   // });
 
-  // when the user disconnects.. perform this
   socket.on('disconnect', () => {
     console.log("socket disconnect")
+    console.log("g_username " + g_username)
     
     if (g_username === "" && userinfos.size === 0) {
-      console.log("curr process is " + process.pid + " there is no user");
-      process.exit()
+      console.log('start time out')
+      setTimeout(()=>{
+        console.log("curr process is " + process.pid + " there is no user");
+        process.exit()
+      }, 60000)
     }
   });
 });

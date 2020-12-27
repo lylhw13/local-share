@@ -3,7 +3,9 @@
 
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
-      <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+      <template v-slot:action="{ attrs }">
+      <v-btn color="white" text v-bind="attrs" @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+      </template>
     </v-snackbar>
 
     <span id="title">{{ pageTitle }}</span>
@@ -87,10 +89,7 @@ export default {
   },
   beforeCreate() {
     this.isServerPage = false;
-    // console.log(new URL(window.location.href).hostname);
     const currentUrl = new URL(window.location.href);
-    // console.log("hostname is " + currentUrl.hostname);
-    // console.log("port is " + currentUrl.port);
     if (currentUrl.hostname === "127.0.0.1") {
       this.isServerPage = true;
     }
@@ -166,12 +165,12 @@ export default {
             this.username = "";
           }
           // that.alert = true
-          //alert(error.response.data.message);
+          // alert(error.response.data.message);
           this.errorMsg = error.response.data.message;
           this.snackbar = true
 
-          this.$store.commit("setLoginState", true);
-          this.$router.push("/messagewindow");
+          // this.$store.commit("setLoginState", true);
+          // this.$router.push("/messagewindow");
           // window.history.forward(1)
 
         //   return;

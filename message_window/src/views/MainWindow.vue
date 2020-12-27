@@ -2,8 +2,11 @@
   <v-container id="container" fill-height flex align-start v-bind:style="containerColor">
     <v-snackbar v-model="snackbar" :timeout="6000" top color="error">
       {{errorMsg}}
-      <v-btn color="white" text @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+      <template v-slot:action="{ attrs }">
+      <v-btn color="white" text v-bind="attrs" @click="snackbar = false"><v-icon>mdi-close-circle-outline</v-icon></v-btn>
+      </template>
     </v-snackbar>
+    
 
       <div id="messages-window" v-bind:style="{'height': `${messageWindowHeight}px`}">
         <v-list color="white lighten-4" pa-1 pb-2 id="scrollable" style="height:100%;" >
@@ -14,14 +17,11 @@
             >
 
           <template v-if="item.type === 'info'">
-            <!-- <v-flex class="d-flex justify-center fill-width"> -->
               <div class="d-flex justify-center" style="background-color:white; width:100%">
               <span class="font-weight-light caption">用户</span>
               <span class="font-weight-bold caption ml-1 mr-1">{{item.username}}</span>
               <span class="font-weight-light caption">{{item.data}}，目前共有{{item.num}}位用户</span> 
-              <!-- hello -->
             </div>
-            <!-- </v-flex> -->
           </template>
 
           <template v-else>
@@ -53,12 +53,9 @@
             </v-textarea>
 
             <v-btn v-on:click="send" fab small class="align-self-center ml-1 mr-1" v-bind:loading="loading">
-              
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </div>
-
-          
       </div>
         
   </v-container>
@@ -125,7 +122,7 @@ export default {
     };
   },
   components:{
-    MessageItem
+    MessageItem,
   },
 
   computed: {
@@ -156,10 +153,9 @@ export default {
   mounted() {
     console.log("mainwindow mounted")
 
-    socket.emit('add user', {
+    socket.emit('user join', {
       username: this.$store.state.username,
     })
-
 
     socket.on('new message', (msg) => {
       console.log("new message")
