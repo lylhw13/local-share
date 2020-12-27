@@ -6,6 +6,7 @@
       :src="path"
       v-on:click="dialog = !dialog"
       v-on:load="$emit('loaded')"
+      class="grey lighten-2"
     >
       <template v-slot:placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
@@ -20,6 +21,7 @@
     <v-dialog v-model="dialog" transition="dialog-transition">
       <v-card v-on:click="dialog = !dialog">
         <v-img :src="path" contain
+        class="grey lighten-2"
         >
         </v-img>
 

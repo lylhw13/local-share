@@ -8,17 +8,31 @@ const {getLocalIp} = require("./util/local_ip");
 const multer = require("multer")
 const mime = require('mime-types')
 
-const fileFolder = "./temp/"
+const fs = require("fs");
+
+const urlFilePah = '/files/'
+const fileFolder = "." + urlFilePah
+if (!fs.existsSync(fileFolder)) {
+  fs.mkdirSync(fileFolder)
+}
+
 var upload = multer({dest: fileFolder})
 
-// const port = process.env.PORT || 10001;
-const port = 10001;
+var port = 10001;
 
-server.listen(port, () => {
-  console.log('Server listening at port %d', port);
-});
+const serverInstance = server.listen(port, () => { 
+      console.log('Server listening at port %d', port);
+      })
+      .on('error', function (err) {
+          if(err.code === 'EADDRINUSE') {
+              console.log(`----- Port ${port} is busy, trying with port ${port + 1} -----`);
+              port += 1;
+              serverInstance.listen(port);
+          } else {
+              console.log(err);
+          }
+      });
 
-// Routing
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -85,24 +99,16 @@ app.post('/api/upload_file', upload.single("file"), (req, res) => {
   console.log("file: ")
   console.log(req.file)
 
-  // {
-  //   fieldname: 'file',
-  //   originalname: 'Operating Systems Design Implementation 3.pdf',
-  //   encoding: '7bit',
-  //   mimetype: 'application/pdf',
-  //   destination: './temp/',
-  //   filename: '9a21331fe285a9252efdbc5fdf4eea67',
-  //   path: 'temp/9a21331fe285a9252efdbc5fdf4eea67',
-  //   size: 35870253
-  // }
 
   return res.status(200).send({
-    path: "/temp/" + req.file.filename
+    // path: "/temp/" + req.file.filename
+    path: urlFilePah + req.file.filename
+    // path: path.join(filePath, req.file.filename)
   })
 })
 
 
-app.get('/temp/:name', (req,res) => {
+app.get(urlFilePah + ":name", (req,res) => {
   console.log("download")
   var filename = req.params.name
   var options = {
@@ -163,13 +169,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // when the client emits 'typing', we broadcast it to others
-  // socket.on('typing', () => {
-  //   socket.broadcast.emit('typing', {
-  //     username: socket.username
-  //   });
-  // });
-
   socket.on('disconnect', () => {
     console.log("socket disconnect")
     console.log("g_username " + g_username)
@@ -177,42 +176,15 @@ io.on('connection', (socket) => {
     if (g_username === "" && userinfos.size === 0) {
       console.log('start time out')
       setTimeout(()=>{
-        console.log("curr process is " + process.pid + " there is no user");
-        process.exit()
+        if (g_username === "" && userinfos.size === 0) {
+          console.log("curr process is " + process.pid + " there is no user");
+          process.exit()
+        }
       }, 60000)
     }
   });
 });
 
 
-// app.get('/temp', (req, res) =>{
-//   console.log("download");
-//   console.log(req.query)
-//   var filename = req.query.originalName
-//   console.log(filename)
 
-//   // var fileExt = filename.split('.').pop();
-//   var mime_type = mime.lookup(filename.split('.').pop());
-
-//   console.log(mime_type)
-
-//   var options = {
-//     root: path.join(__dirname, fileFolder),
-//     dotfiles: 'deny',
-//     headers: {
-//       'x-timestamp': Date.now(),
-//       'x-sent': true,
-//       'Content-Type': mime_type,
-//       'Content-Disposition': 'attachment; filename=' + encodeURI(filename)
-//     }
-//   }
-
-//   res.sendFile(req.query.name, options, function (err) {
-//     if (err) {
-//       console.log(err)
-//     } else {
-//       console.log('Sent:', filename)
-//     }
-//   })
-// })
 

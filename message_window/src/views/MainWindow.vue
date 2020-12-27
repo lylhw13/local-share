@@ -107,7 +107,7 @@ export default {
         username: "周杰伦",
         num: 2
       },{
-          type: "text",
+          type: "image",
           data:"哈哈哈，你怎么这么渣",
           time: Date.now(),
           receive: true,  
@@ -134,8 +134,8 @@ export default {
     },
 
     containerColor: function(){
-      // return 'border: 2px ' + this.$store.state.color
-      return 'border: 2px solid red'
+      return 'border: 2px solid ' + this.$store.state.color
+      // return 'border: 2px solid red'
     },
 
   },
@@ -198,10 +198,10 @@ export default {
       // this.messageWindowHeight = document.getElementById("container").offsetHeight - document.getElementById("input-window").offsetHeight;
       this.inputWindowWidth = document.getElementById("container").offsetWidth - 8;
     },
-      loaded(){
-        console.log("load finish")
-        this.scrollUp()
-      },
+    loaded(){
+      console.log("load finish")
+      this.scrollUp()
+    },
     scrollUp() {
       console.log("scroll")
         var container = this.$el.querySelector('#scrollable');
@@ -269,9 +269,9 @@ export default {
 
     },
 
-    download() {
-      console.log("download");
-    }
+    // download() {
+    //   console.log("download");
+    // }
 
   },
 };

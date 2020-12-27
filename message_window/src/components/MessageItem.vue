@@ -43,12 +43,13 @@
         </template>
 
         <!-- file part -->
+        <!-- v-on:dblclick="downloadFile" -->
         <template v-if="message.type === 'file'">
           <div
             id="file-message"
             class="message-text-content"
             :style="styleObject"
-            v-on:dblclick="downloadFile"
+            v-on:click="downloadFile"
           >
             <v-img
               :src="require('../assets/file.png')"
