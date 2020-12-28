@@ -50,3 +50,9 @@ npm run lint
 ## TODO
 - 显示在线用户列表
 
+
+![server_setting](example_pic/server_setting.png "server setting")
+![qrcode](example_pic/qrcode.png "qrcode")
+![phone_login](example_pic/phone_login.png "phone login")
+![phone_message](example_pic/phone_message.jpeg "phone message")
+

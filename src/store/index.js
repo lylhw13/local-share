@@ -16,11 +16,11 @@ export default new Vuex.Store({
     },
     setLoginState(state, loginState) {
       state.loginState = loginState;
-      if (!loginState) {
-        state.username = '';
-        state.color = '';
-        state.serverIp = ''
-      }
+      // if (!loginState) {
+      //   state.username = '';
+      //   state.color = '';
+      //   state.serverIp = ''
+      // }
     },
     setColor(state, color) {
       state.color = color;

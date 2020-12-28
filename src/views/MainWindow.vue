@@ -88,37 +88,8 @@ export default {
       sheet: false,
       inputWindowWidth: 300,
       messageWindowHeight: 300,
-      // username: "",
-      // messages: [],
-      messages: [{
-          type: "file",
-          data:"我的苹果呢？",
-          time: Date.now(),
-          receive: false,  
-          username: "李渣",
-          color: "red",
-          info: {
-            path: "",
-            name: "",
-          }
-      },{
-        type:"info",
-        data: "加入",
-        username: "周杰伦",
-        num: 2
-      },{
-          type: "image",
-          data:"哈哈哈，你怎么这么渣",
-          time: Date.now(),
-          receive: true,  
-          username: "周杰伦",
-          color: "blue",
-      },{
-        type:"info",
-        data: "离开",
-        username: "周杰伦",
-        num: 1
-      }],
+      username: "",
+      messages: [],
     };
   },
   components:{

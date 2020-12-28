@@ -53,7 +53,7 @@
           >
             <v-img
               :src="require('../assets/file.png')"
-              class="my-0"
+              class="align-self-center my-0"
               contain
               height="50"
               width="50"
