@@ -4,7 +4,7 @@ function getLocalIp() {
       var iface = ifaces[dev].filter((details) => {
           return (
               details.family === "IPv4" &&
-              details.internal === false &&
+              details.internal === false && 
               !details.mac.startsWith("00:50:56")
           );
       });

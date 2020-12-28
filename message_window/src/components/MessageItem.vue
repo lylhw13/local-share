@@ -153,10 +153,7 @@ export default {
 }
 
 .message-text-content {
-  /* min-width: 10vw; */
-  /* min-height: 10vh; */
   border: 1px solid;
-  /* border-color: red; */
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
   display: flex;
@@ -171,6 +168,5 @@ export default {
 #message-part {
   display: flex;
   flex-direction: column;
-  /* margin-bottom: 1.5rem; */
 }
 </style>
