@@ -1,6 +1,6 @@
 # local share
 
-类似于web chat， 可以方便地在多设备之间分享文字，图片和文件
+类似于web chat， 可以方便地在局域网内的多设备之间分享文字，图片和文件
 
 功能：
 - 除了服务器，其他设备无需下载，通过网页即可访问
@@ -49,9 +49,16 @@ npm run lint
 ## TODO
 - 显示在线用户列表
 
-
+## 界面展示
+server 设置界面
 ![server_setting](example_pic/server_setting.png "server setting")
+
+用于方便其他设备加入的二维码
 ![qrcode](example_pic/qrcode.png "qrcode")
+
+设备登录界面
 ![phone_login](example_pic/phone_login.png "phone login")
+
+消息界面
 ![phone_message](example_pic/phone_message.jpeg "phone message")
 
